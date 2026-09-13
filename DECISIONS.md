@@ -1,0 +1,57 @@
+# Decisions
+
+A dated log of decisions about the photography site and the reasoning behind them. Newest at the bottom. When a decision changes, add a new entry rather than editing the old one, so the reasoning is preserved.
+
+## 2026-09-12
+
+**Migrate off Squarespace to a static site built by a Python script.**
+Squarespace is too expensive for what it does. The two things it did well, arranging photos by eye and the full-bleed landing slideshow, are both reproducible: the slideshow in the spec, the arranging via a local curate page. Static output on GitHub Pages is free and fast. Python because I am learning it, coming from Stata.
+
+**Survey of the current site, for the record.**
+Squarespace 7.0, Pacific template, Futura PT. Root is a Cover Page slideshow with five direct links. Inner nav: Landscape (Color, Monochrome), People (5 galleries), Adventures (2 empty blog collections), Anthology (12 galleries), About. Gallery pages are Pacific's horizontal filmstrip, no captions. Bloat outside the nav: a demo print store with lorem ipsum, a one-post blog from 2019, a stale `/home`, duplicate `/landscape` and `/anthology` pages, three orphaned galleries. The cover-page email link is malformed. About 22 galleries and 330 images in total.
+
+**The iPhone trip galleries on christinasun.net are not portfolio work.**
+They were shot on a phone and are not the best work. They stay on the academic site for now. The film photos from those same trips, which are not yet on either site, are what goes on the photography site next.
+
+**Do not merge landscape work across eras into one page.**
+The 2019 digital work (Glacier, Yosemite, Death Valley, Oregon) and the 2024 to 2026 film work differ in palette, aspect ratio, subject, and composition. But the 2019 work includes photographs I am proud of and does not go to Archive. Resolution: the Landscape section holds several series, each internally coherent; only the index page, a grid of covers, shows them side by side.
+
+## 2026-09-13
+
+**The series is the content unit. No grouping by format, trip, or year.**
+Grouping the film work by strand (square, panoramic, monochrome) was proposed and rejected as unsophisticated. The model that works is already on the site: Sand and Stone, Meditation on Solitude, Nightfall, Outskirts, Quiet Days are titled, sequenced series with a statement and a central thesis. Every gallery becomes one of these. Poetic names add value because they present a thesis.
+
+**Color and monochrome are tags on a series, not a level of the hierarchy.**
+"Landscape: Color" was an umbrella meaning all color photos including film, and "Monochrome" the same. Keeping them as levels would either mix eras on one page or add a third level of nesting for five series. As a tag on the series they survive as a filter without either cost.
+
+**Five sections: Landscape, People, Interludes, Archive, About.**
+A third body of work exists that is neither commissioned nor landscape: select frames from beach days, friends on the coast, quiet rolls. It needs its own section so it neither dilutes People nor gets buried in Archive. The tagline (nature, people, everything in between) is the thesis for the three-way split. "In Between" as a section name was rejected as boring; "Interludes" chosen.
+
+**Retitle the 2019 digital galleries as thematic series.**
+"Landscape: Color" and "Landscape: Monochrome" are category labels, not series titles, and are inconsistent with the series model. Titles must be in the register of Sand and Stone: plain visible nouns or a single plain word, with the abstraction coming from the pairing, not from an obscure word. "Vespers" rejected for that reason. Every frame on both pages was reviewed individually before proposing titles. The monochrome set (five Glacier storm frames plus fog trees) is *Storm Light*. The color set (eleven of thirteen frames are the sky at the edge of the day) is unresolved; *Afterglow* was rejected, *Alpenglow* is the placeholder, and the question stays open in TODO.md.
+
+**Move the film panorama out of the 2019 color series.**
+`000033810003-Edit.jpg` is 2020 Eastern Sierra film and is already the opening frame of *The Mountains are Calling*. It leaves the color series, which becomes purely digital.
+
+**The Mountains are Calling and Sand and Stone move up from Anthology into Landscape.**
+Both are landscape film series and were only hidden by the Anthology label. Quiet Days moves to Interludes. The remaining nine Anthology galleries go to Archive at launch, pending the gallery revisit in TODO.md.
+
+**Column layout, not a justified grid.**
+A grid makes the photographs small and reads as a contact sheet. One image per row, sized to the viewport, gives visual impact and makes the sequence matter, which is the point of a series. Grid stays available per series but unused at launch. Pairs layout was offered and not adopted.
+
+**Real content from day one, pulled from the Squarespace CDN.**
+The live images are full quality (the bare CDN URL returns the stored 2500px upload). Placeholder gradients are unnecessary. Lightroom originals exist for everything and can replace CDN copies later through the hash cache. The 2024 to 2026 film scans are unedited; those series arrive after editing, so the site launches without them.
+
+**Ordering via YAML list plus a local curate page.**
+Drag-and-drop matters less than having a clear way to arrange order, but visual flow is very important. The curate page from the academic site (`chesun.github.io/bin/curate.py`) already does this and is ported rather than reinvented.
+
+**About page: keep bio, exhibitions list, academic link, Lange quote. Drop Facebook, newsletter, blog, print store.**
+
+**Domain stays at Squarespace as domain-only for now.**
+Squarespace is registrar and DNS for christinasunphoto.com and christinasun.org (which redirects to the photo site). christinasun.net is at GoDaddy. Transfer is a separate later task. No redirects from old gallery URLs are needed.
+
+**Fonts: Futura does not matter.**
+The current wordmark is Futura PT, which is not self-hostable. Any deliberately chosen light grotesque is fine; the uppercase letterspaced treatment is the continuity, not the face.
+
+**Canonical contact email is `christinasunphotography@gmail.com`.**
+Both addresses on the old site exist. The About-page one is canonical; `chesunphotography@gmail.com` stays off the site.
