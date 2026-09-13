@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% set active_section = "about" %}
+{% block title %}About — {{ site.title }}{% endblock %}
+{% block body_class %}page page-about{% endblock %}
+
+{% block main %}
+<article class="about">
+  <figure class="about-portrait reveal" style="--tone:{{ portrait.color }}">
+    <img src="{{ portrait.src }}" width="{{ portrait.width }}" height="{{ portrait.height }}" alt="Christina Sun" loading="eager" decoding="async">
+  </figure>
+  <div class="about-text prose reveal">
+    {{ body | safe }}
+    <p class="about-links">
+      <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>
+      <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+    </p>
+  </div>
+</article>
+{% endblock %}

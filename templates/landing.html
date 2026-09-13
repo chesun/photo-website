@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set active_section = none %}
+{% block body_class %}page page-landing{% endblock %}
+
+{% block main %}
+{# Phase 1 stand-in. Phase 2 replaces this with the full-viewport slideshow. #}
+<section class="landing-placeholder reveal">
+  <h1 class="landing-title">{{ site.title }}</h1>
+  <p class="landing-tagline">{{ site.tagline }}</p>
+  <ul class="landing-links">
+    {% for item in site.nav %}
+    <li><a href="/{{ item.slug }}/">{{ item.label }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

@@ -149,7 +149,7 @@ Rules the build enforces:
 - Strip EXIF (including GPS) from output images; preserve orientation; convert to sRGB.
 - Incremental builds: cache by content hash in `.cache/`; unchanged images are never reprocessed. Rebuilds with no image changes must be near-instant. Swapping a CDN copy for a Lightroom re-export of the same frame is just a new hash.
 - Generate `sitemap.xml`, a designed 404 page, favicon + apple-touch-icon, and per-page meta/OpenGraph tags (og:image = series cover).
-- `--serve`: local dev server with rebuild-on-change (a simple polling watcher is fine). Also serves the curate page at `/_curate/`.
+- `--serve`: local dev server with rebuild-on-change (a simple polling watcher is fine), restarting itself when a build script changes. Also serves the curate page at `/_curate/`.
 - Fail loudly and helpfully on bad YAML, missing files, unknown keys, or non-image files.
 
 ## Migration script (`python scripts/migrate_squarespace.py`)
@@ -211,11 +211,11 @@ For high-volume galleries where scanning matters more than sequence, `layout: gr
 
 ### Section index pages (Landscape, People, Interludes)
 
-A grid of series covers, large: two columns on desktop, one on mobile. Under each cover, the series title in the serif and a small uppercase tone tag (Color or Monochrome) in the grotesque. Ordered by `order`. Covers keep their own aspect ratios inside a consistent row height; no cropping to squares.
+Series covers in justified rows computed at build time: covers are added to a row until, at a target height of about a third of the content width, they would fill it, then the row's height is solved so the covers plus gaps fill the width exactly. Every cover keeps its own aspect ratio, every image in a row has the same height, and titles line up. A trailing partial row keeps the target height rather than stretching. Under each cover, the series title in the serif and a small uppercase tone tag (Color or Monochrome) in the grotesque. Ordered by `order`. On phones the rows stack to one full-width cover each.
 
 ### Archive index
 
-One quiet page: smaller covers, three or four columns, title only. Archive series are never in the nav and never in section indexes.
+The same justified rows at a smaller target height, about a fifth of the content width, with title and tone tag. Archive series are never in the nav and never in section indexes.
 
 ### Landing slideshow
 

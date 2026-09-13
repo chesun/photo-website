@@ -55,3 +55,14 @@ The current wordmark is Futura PT, which is not self-hostable. Any deliberately 
 
 **Canonical contact email is `christinasunphotography@gmail.com`.**
 Both addresses on the old site exist. The About-page one is canonical; `chesunphotography@gmail.com` stays off the site.
+
+**Phase 1 built (2026-09-13): content model, migration, image pipeline, series pages, lightbox, dev server.**
+Choices made while building, all reversible:
+
+- Series `tone` is measured from the images at migration time (median HSV saturation, threshold 20 of 255) rather than guessed. Every result matched expectation on inspection.
+- The Squarespace sitemap lists one image per gallery that the gallery page does not display (six cases). Those files are downloaded to `content/_unplaced/`, which the build ignores, so nothing is lost when Squarespace is cancelled.
+- The landing slideshow's sixteen images on the old site are carried over as the `featured` lists, so the existing curation is not lost.
+- Section indexes use justified rows computed at build time instead of a fixed grid, because covers with different aspect ratios in a grid leave titles at uneven heights, and two portrait covers in a two-column grid become enormous.
+- Image variants are 480, 1600, and 2400px on the long edge at JPEG quality 82. On a retina display the browser picks the 2400px file for column layout, so a series page is heavy; revisit in the phase 4 performance pass.
+- The dev server restarts itself when a build script changes, since Python does not reload imported modules.
+

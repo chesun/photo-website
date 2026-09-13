@@ -1,0 +1,11 @@
+# Generated site and image cache
+dist/
+.cache/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

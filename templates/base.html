@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.classList.replace("no-js", "js")</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site.title }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.description }}{% endblock %}">
+  <link rel="preload" href="/static/fonts/hanken-grotesk-300.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/fraunces-300.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/fonts/fonts.css">
+  <link rel="stylesheet" href="/static/vendor/photoswipe/photoswipe.css">
+  <link rel="stylesheet" href="/static/css/site.css">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}page{% endblock %}">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <a class="wordmark" href="/">{{ site.title }}</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="menu-toggle-label">Menu</span>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <ul>
+        {% for item in site.nav %}
+        <li><a href="/{{ item.slug }}/"{% if active_section == item.slug %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="site-main">
+    {% block main %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      <span>{{ site.title }}</span>
+      <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>
+      <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+    </p>
+  </footer>
+
+  <script type="module" src="/static/js/site.js"></script>
+</body>
+</html>

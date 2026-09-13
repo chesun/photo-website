@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set active_section = series.section %}
+{% block title %}{{ series.title }} — {{ site.title }}{% endblock %}
+{% block description %}{{ series.statement or site.description }}{% endblock %}
+{% block body_class %}page page-series{% endblock %}
+
+{% block main %}
+<header class="series-head reveal">
+  <p class="eyebrow"><a href="/{{ series.section }}/">{{ site.section_label(series.section) }}</a></p>
+  <h1 class="series-title">{{ series.title }}</h1>
+  <p class="tone-tag">{{ series.tone }}</p>
+  {% if series.statement %}
+  <p class="series-statement">{{ series.statement }}</p>
+  {% endif %}
+</header>
+
+<div class="column" id="gallery">
+  {% for f in frames %}
+  <figure class="frame reveal" style="--ratio:{{ f.ratio }};--w:{{ f.width }};--h:{{ f.height }};--tone:{{ f.color }}">
+    <a href="{{ f.large }}" data-pswp-width="{{ f.large_width }}" data-pswp-height="{{ f.large_height }}"
+       data-caption="{{ f.caption }}" aria-label="Open {{ f.alt }} full screen">
+      <img src="{{ f.src }}" srcset="{{ f.srcset }}" sizes="{{ f.sizes }}"
+           width="{{ f.width }}" height="{{ f.height }}" alt="{{ f.alt }}"
+           {% if f.eager %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async">
+    </a>
+    {% if f.caption %}<figcaption>{{ f.caption }}</figcaption>{% endif %}
+  </figure>
+  {% endfor %}
+</div>
+{% endblock %}
