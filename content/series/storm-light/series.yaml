@@ -8,7 +8,8 @@ layout: column
 published: true
 statement: ''
 cover: 725A3687-Pano-Edit.jpg
-featured: []
+featured:
+- 725A3687-Pano-Edit.jpg
 images:
 - 725A3687-Pano-Edit.jpg
 - 725A4372-Edit.jpg

@@ -9,7 +9,8 @@ published: true
 statement: A collection of photographs from my first trip to the Eastern Sierra in January
   2020. Shot on Kodak Ektachrome E100 and Fuji Velvia 100.
 cover: 000033810003-Edit.jpg
-featured: []
+featured:
+- 000033810003-Edit.jpg
 images:
 - 000033810003-Edit.jpg
 - 000033810009.jpg

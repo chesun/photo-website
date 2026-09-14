@@ -8,7 +8,7 @@ Open questions and future work for the photography site. Decisions, once made, m
 
 ## Open questions
 
-- [ ] **Set focal points on the featured images that crop badly** on the landing page, via `focal:` in the series YAML (or the curate page once phase 3 exists).
+- [ ] **Set focal points by eye on the landing slideshow images**, in the curate page once phase 3 exists (click on the photo to place the anchor; it writes `focal:` in the series YAML). Until then a centre crop applies.
 
 - [ ] **Decide what to do with `content/_unplaced/`.** Eight images the old sitemap listed but the gallery pages never showed, one each for Nightfall, Streets of Sacramento, UC Davis Symphony Orchestra, The City by the Sea, and two each for Streets of Davis and Adventure. Move into a series, or delete.
 
