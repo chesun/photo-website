@@ -8,6 +8,7 @@ Open questions and future work for the photography site. Decisions, once made, m
 
 ## Open questions
 
+- [ ] **Review the landing slideshow selection by eye** in the curate page once phase 3 exists. The current eight (two from Alpenglow, one each from Storm Light, Sand and Stone, The Mountains are Calling, From the Earth to the Stars, Love on the Coast, Graduations) were a first pass on 2026-09-14, chosen for one or two per genre and for surviving a 16:9 crop.
 - [ ] **Set focal points by eye on the landing slideshow images**, in the curate page once phase 3 exists (click on the photo to place the anchor; it writes `focal:` in the series YAML). Until then a centre crop applies.
 
 - [ ] **Decide what to do with `content/_unplaced/`.** Eight images the old sitemap listed but the gallery pages never showed, one each for Nightfall, Streets of Sacramento, UC Davis Symphony Orchestra, The City by the Sea, and two each for Streets of Davis and Adventure. Move into a series, or delete.
