@@ -188,8 +188,8 @@ Design vision: a quiet, gallery-white, editorial site where the design disappear
 
 **Typography.** Two self-hosted open-source faces, subset to the characters used, `font-display: swap`:
 
-- A light-weight grotesque (Hanken Grotesk, Figtree, or similar — choose deliberately) for the wordmark, nav, and captions. Wordmark and nav are uppercase with generous letterspacing (tracking ≥ 0.15em) at small sizes. This is the one thread of continuity with the current site's identity; the current face is Futura PT, which is not self-hostable and does not need to be matched.
-- A quiet, refined serif (Fraunces at low optical size settings, Cormorant, or similar) for series titles and the about-page statement, used sparingly and large.
+- **Inter** (chosen 2026-09-14 from a comparison sheet of nine candidates), weights 300 and 400, for the wordmark, nav, captions, and body. Wordmark and nav are uppercase with generous letterspacing (tracking ≥ 0.15em) at small sizes. This is the one thread of continuity with the current site's identity; the current face is Futura PT, which is not self-hostable and does not need to be matched.
+- **Newsreader** (chosen the same day from ten candidates), weight 300 with its optical-size axis left on automatic, plus the 300 italic for the landing tagline, for series titles, statements, and the About headline, used sparingly and large.
 
 Set a real type scale with intentional sizes and weights; body text max-width around 65ch. Type is the personality of the page; make the pairing feel chosen for a photographer, not defaulted.
 
@@ -227,6 +227,8 @@ Full-viewport crossfading slideshow of every image marked `featured` across all 
 **Lightbox.** Skin PhotoSwipe to match: near-black backdrop, minimal chrome, captions set in the grotesque at caption size, keyboard and swipe navigation. It should feel native to the site, not like a plugin.
 
 **Micro-detail floor (non-negotiable):** visible `:focus-visible` states; a styled text-selection color; ≥44px touch targets; active-section indication in the nav; a designed (not default) 404; correct favicons; no layout shift anywhere (verify with the aspect-ratio boxes above).
+
+**Favicon.** A near-black disc on the site's off-white, a sun for Sun: `favicon.svg` for modern browsers, `favicon.ico` at 16, 32, and 48px, and a 180px `apple-touch-icon.png`. Generated once by `scripts/make_favicons.py` and committed under `static/`.
 
 **Performance.** Target Lighthouse ≥ 95 on performance, accessibility, best practices, and SEO for a series page. Preload the hero image and fonts; everything else lazy. Column layout downloads bigger images than a grid would, so lazy loading and the medium variant's size matter more here.
 

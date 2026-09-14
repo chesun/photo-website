@@ -14,17 +14,37 @@
   {% endif %}
 </header>
 
-<div class="column" id="gallery">
-  {% for f in frames %}
-  <figure class="frame reveal" style="--ratio:{{ f.ratio }};--w:{{ f.width }};--h:{{ f.height }};--tone:{{ f.color }}">
+{% macro photo(f, sizes) %}
     <a href="{{ f.large }}" data-pswp-width="{{ f.large_width }}" data-pswp-height="{{ f.large_height }}"
        data-caption="{{ f.caption }}" aria-label="Open {{ f.alt }} full screen">
-      <img src="{{ f.src }}" srcset="{{ f.srcset }}" sizes="{{ f.sizes }}"
+      <img src="{{ f.src }}" srcset="{{ f.srcset }}" sizes="{{ sizes }}"
            width="{{ f.width }}" height="{{ f.height }}" alt="{{ f.alt }}"
            {% if f.eager %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async">
     </a>
+{% endmacro %}
+
+{% if rows %}
+{# layout: grid — justified rows solved at build time (render.justified_rows) #}
+<div class="grid" id="gallery">
+  {% for row in rows %}
+  <div class="grid-row">
+    {% for f in row %}
+    <figure class="frame frame-grid reveal" style="--w:{{ f.width_pct }}%;--ratio:{{ f.ratio }};--tone:{{ f.color }}">
+      {{ photo(f, "(min-width: 800px) min(" ~ f.width_pct ~ "vw, calc(1600px * " ~ f.width_pct ~ " / 100)), calc(100vw - 32px)") }}
+    </figure>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+{# layout: column — one photograph per row, sized to the viewport #}
+<div class="column" id="gallery">
+  {% for f in frames %}
+  <figure class="frame reveal" style="--ratio:{{ f.ratio }};--w:{{ f.width }};--h:{{ f.height }};--tone:{{ f.color }}">
+    {{ photo(f, f.sizes) }}
     {% if f.caption %}<figcaption>{{ f.caption }}</figcaption>{% endif %}
   </figure>
   {% endfor %}
 </div>
+{% endif %}
 {% endblock %}

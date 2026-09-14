@@ -91,3 +91,48 @@ if (gallery) {
   });
   lightbox.init();
 }
+
+// --- Landing slideshow -------------------------------------------------------
+// Crossfade through the slides on a timer. Only the first slide ships with a
+// src; each next slide is loaded while the current one is showing, so the
+// page never downloads a photograph it has not reached yet. The timer stops
+// when the tab is hidden and under prefers-reduced-motion the first slide
+// simply stays.
+
+const hero = document.querySelector(".hero");
+if (hero) {
+  const slides = [...hero.querySelectorAll(".hero-slide")];
+  const hold = Number(hero.dataset.hold) || 6000;
+  let current = 0;
+  let timer = null;
+
+  function load(img) {
+    if (!img || !img.dataset.src) return;
+    img.srcset = img.dataset.srcset;
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+    delete img.dataset.srcset;
+  }
+  function advance() {
+    const next = (current + 1) % slides.length;
+    slides[current].classList.remove("is-active");
+    slides[next].classList.add("is-active");
+    current = next;
+    load(slides[(current + 1) % slides.length]);     // stay one slide ahead
+  }
+  function start() {
+    if (timer || slides.length < 2 || reducedMotion) return;
+    timer = setInterval(advance, hold);
+  }
+  function stop() {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  if (!reducedMotion) {
+    load(slides[1]);
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+    start();
+  }
+}
+

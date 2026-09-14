@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% set active_section = none %}
+{% block title %}Not found — {{ site.title }}{% endblock %}
+{% block body_class %}page page-notfound{% endblock %}
+
+{% block main %}
+<section class="notfound reveal">
+  <p class="eyebrow">404</p>
+  <h1 class="series-title">Nothing here.</h1>
+  <p class="notfound-text">The page you were looking for has moved, or never existed. The photographs are all still here.</p>
+  <ul class="notfound-links">
+    {% for item in site.nav %}
+    <li><a href="/{{ item.slug }}/">{{ item.label }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

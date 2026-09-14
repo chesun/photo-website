@@ -82,6 +82,20 @@ class Renderer:
             "eager": position <= 2,
         }
 
+    def slide(self, series, filename, info, published):
+        """A landing-page slide: the large variant, sized to the viewport."""
+        variants = info.variants
+        img_url = f"/img/{series.slug}/"
+        return {
+            "src": img_url + published["large"],
+            "srcset": ", ".join(f"{img_url}{published[n]} {variants[n]['width']}w" for n in ("medium", "large")),
+            "width": info.width,
+            "height": info.height,
+            "color": info.average_color,
+            "alt": series.captions.get(filename) or series.title,
+            "series_url": series.url,
+        }
+
     def cover(self, series, info, published):
         """A series cover as shown on index pages."""
         return {
@@ -99,35 +113,42 @@ class Renderer:
         }
 
 
-def cover_rows(covers, target_height=0.36, gap=0.02):
-    """Arrange covers into justified rows of equal image height.
+def justified_rows(items, target_height=0.36, gap=0.02):
+    """Arrange items with a `ratio` (width / height) into justified rows.
 
     All sizes are fractions of the container width, so the layout scales
-    with the viewport. Covers are added to a row until, at `target_height`,
-    they would fill the width; the row's height is then solved so the covers
+    with the viewport. Items are added to a row until, at `target_height`,
+    they would fill the width; the row's height is then solved so the items
     plus gaps fill it exactly. Panoramas therefore share a row with fewer
     neighbours than portraits do, and nothing ends up as a sliver. A trailing
     partial row keeps the target height (or the previous row's, if lower)
     rather than stretching to fill the width.
+
+    Used for series covers on the index pages and for photographs in a
+    series that opts into `layout: grid`. Each returned item gains
+    `width_pct`, the width as a percentage of the container.
     """
     rows, row, previous_height = [], [], target_height
 
-    def solved(items, height=None):
-        ratios = [float(c["ratio"]) for c in items]
+    def solved(current, height=None):
+        ratios = [float(c["ratio"]) for c in current]
         if height is None:
-            height = (1 - gap * (len(items) - 1)) / sum(ratios)
-        return height, [{**c, "width_pct": f"{height * r * 100:.3f}"} for c, r in zip(items, ratios)]
+            height = (1 - gap * (len(current) - 1)) / sum(ratios)
+        return height, [{**c, "width_pct": f"{height * r * 100:.3f}"} for c, r in zip(current, ratios)]
 
-    for cover in covers:
-        row.append(cover)
+    for item in items:
+        row.append(item)
         width_at_target = sum(float(c["ratio"]) for c in row) * target_height + gap * (len(row) - 1)
         if width_at_target >= 1:
-            previous_height, items = solved(row)
-            rows.append(items)
+            previous_height, solved_row = solved(row)
+            rows.append(solved_row)
             row = []
     if row:
         rows.append(solved(row, height=min(target_height, previous_height))[1])
     return rows
+
+
+cover_rows = justified_rows   # the name used by build.py for index pages
 
 
 def markdown_to_html(text):

@@ -70,3 +70,10 @@ Choices made while building, all reversible:
 
 **Photographs stay in git.**
 Keeping the JPEGs out of the repository was tried and reversed the same day. Out of git, the images would need their own backup, a fresh clone could not build, and deployment would have to run from the one machine that has them instead of from GitHub Actions. The cost of keeping them in is repository size, about 225MB now, growing with each re-export; GitHub's limits (1GB recommended, 100MB per file) are far off. The repository stays the complete source of truth.
+
+**Typefaces: Newsreader and Inter.**
+Hanken Grotesk and Fraunces were the phase 1 placeholders. A comparison sheet of ten serifs and nine sans faces, rendered with the site's real words and sizes, plus a live switcher on a real series page, led to Newsreader for titles and statements and Inter for wordmark, nav, captions, and body. Both are open source and self-hosted. Newsreader's optical-size axis is left on automatic; its 400 weight is not shipped because nothing uses it.
+
+**Phase 2 built (2026-09-14): landing slideshow, 404, favicons, sitemap, OpenGraph, grid layout.**
+The slideshow ships only the first slide's `src` and loads each next slide one ahead, pauses when the tab is hidden, and holds the first frame under reduced motion. The scrim is a radial gradient behind the text block only. The header floats transparent and white over the hero; a backdrop-filter on the header would clip the mobile overlay, so it is dropped while the menu is open. Grid layout reuses the justified-row solver written for the index pages.
+

@@ -76,11 +76,23 @@ The build stops with a clear message if a listed image is missing, a key is miss
 
 Edit the `images` list in `series.yaml`, or use the curate page: run `--serve` and open http://127.0.0.1:8000/_curate/ (phase 3, not built yet).
 
+## The landing slideshow
+
+The landing page cycles through every image listed under `featured` in any published series, in section order (Landscape, People, Interludes, Archive) and then series order. Add or remove filenames there to change the show. The first slide is preloaded; the rest load one ahead as the show runs.
+
+## Column or grid
+
+`layout: column` (the default) shows one photograph per row, sized to the viewport. `layout: grid` packs them into justified rows of equal height, for high-volume galleries where scanning matters more than sequence.
+
 ## Moving, retitling, or hiding a series
 
 - **Move to another section:** change `section`. The URL changes with it.
 - **Retitle:** change `title`. To change the URL too, rename the folder.
 - **Hide:** set `published: false`. The files stay in the repo; no page is built.
+
+## Fonts and favicons
+
+The two typefaces, Inter and Newsreader, are self-hosted from `static/fonts/` as Latin-subset woff2 files downloaded from the Google Fonts API; `fonts.css` next to them declares the faces. The favicons in `static/` are generated once by `scripts/make_favicons.py`.
 
 ## Migrating from Squarespace
 

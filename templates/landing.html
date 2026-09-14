@@ -1,16 +1,31 @@
 {% extends "base.html" %}
 {% set active_section = none %}
 {% block body_class %}page page-landing{% endblock %}
+{% block head %}
+  {% if slides %}
+  <link rel="preload" as="image" href="{{ slides[0].src }}" imagesrcset="{{ slides[0].srcset }}" imagesizes="100vw" fetchpriority="high">
+  {% endif %}
+{% endblock %}
 
 {% block main %}
-{# Phase 1 stand-in. Phase 2 replaces this with the full-viewport slideshow. #}
-<section class="landing-placeholder reveal">
-  <h1 class="landing-title">{{ site.title }}</h1>
-  <p class="landing-tagline">{{ site.tagline }}</p>
-  <ul class="landing-links">
-    {% for item in site.nav %}
-    <li><a href="/{{ item.slug }}/">{{ item.label }}</a></li>
+{# Full-viewport crossfading slideshow of every `featured` image. Only the
+   first slide has a src; site.js loads each next slide just before it is
+   needed. Under prefers-reduced-motion the first slide simply stays. #}
+<section class="hero" data-hold="6000">
+  <div class="hero-slides" aria-hidden="true">
+    {% for s in slides %}
+    <img class="hero-slide{% if loop.first %} is-active{% endif %}"
+         {% if loop.first %}src="{{ s.src }}" srcset="{{ s.srcset }}" fetchpriority="high"{% else %}data-src="{{ s.src }}" data-srcset="{{ s.srcset }}"{% endif %}
+         sizes="100vw" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }}">
     {% endfor %}
-  </ul>
+  </div>
+  <div class="hero-copy">
+    <h1 class="hero-wordmark">{{ site.title }}</h1>
+    <p class="hero-tagline">{{ site.tagline }}</p>
+  </div>
+  <p class="hero-foot">
+    <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>
+    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+  </p>
 </section>
 {% endblock %}
