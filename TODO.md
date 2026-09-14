@@ -8,6 +8,8 @@ Open questions and future work for the photography site. Decisions, once made, m
 
 ## Open questions
 
+- [ ] **Set focal points on the featured images that crop badly** on the landing page, via `focal:` in the series YAML (or the curate page once phase 3 exists).
+
 - [ ] **Decide what to do with `content/_unplaced/`.** Eight images the old sitemap listed but the gallery pages never showed, one each for Nightfall, Streets of Sacramento, UC Davis Symphony Orchestra, The City by the Sea, and two each for Streets of Davis and Adventure. Move into a series, or delete.
 
 - [ ] **Title of the 2019 color series.** Placeholder *Alpenglow*. Rejected so far: Vespers (too oblique), Afterglow (word disliked, "glow" liked), Heaven's Door, The Gilded Hour, Where the Sky Begins, A Brief Eternity, Earth and Sky, Fire and Snow, Water and Light, Moon and Mountain, Half Light, Moonglow, Ember, Glow. The set: alpenglow on a Glacier peak, Zabriskie Point at dusk, full moon over the high Sierra, two figures above a sea of fog under a crescent moon, Oregon coast at dusk, Lake McDonald at dawn, the Milky Way over Mount Hood, the Yosemite Falls moonbow, the sun with birds at the Yolo Bypass, storm light at Logan Pass, the cliff wrapped in cloud, the dune abstract.

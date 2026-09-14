@@ -16,12 +16,21 @@
     {% for s in slides %}
     <img class="hero-slide{% if loop.first %} is-active{% endif %}"
          {% if loop.first %}src="{{ s.src }}" srcset="{{ s.srcset }}" fetchpriority="high"{% else %}data-src="{{ s.src }}" data-srcset="{{ s.srcset }}"{% endif %}
-         sizes="100vw" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }}">
+         sizes="100vw" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }};object-position:{{ s.focus }}">
     {% endfor %}
   </div>
   <div class="hero-copy">
     <h1 class="hero-wordmark">{{ site.title }}</h1>
     <p class="hero-tagline">{{ site.tagline }}</p>
+    {# The site header is hidden on the landing page; the sections live here,
+       inside the scrim, where they never compete with a light sky. #}
+    <nav class="hero-nav" aria-label="Sections">
+      <ul>
+        {% for item in site.nav %}
+        <li><a href="/{{ item.slug }}/">{{ item.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
   </div>
   <p class="hero-foot">
     <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>

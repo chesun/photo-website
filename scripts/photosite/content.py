@@ -28,7 +28,7 @@ IMAGE_SUFFIXES = (".jpg", ".jpeg")
 
 # Every key a series.yaml may contain, and the ones it must contain.
 SERIES_KEYS = {"title", "section", "order", "tone", "layout", "published",
-               "statement", "cover", "featured", "images", "captions"}
+               "statement", "cover", "featured", "images", "captions", "focal"}
 SERIES_REQUIRED = {"title", "section", "order", "tone", "cover", "images"}
 
 SITE_KEYS = {"title", "tagline", "description", "nav", "instagram", "email",
@@ -59,6 +59,7 @@ class Series:
     featured: list
     images: list
     captions: dict
+    focal: dict         # filename -> CSS object-position, e.g. "50% 30%"
 
     @property
     def url(self):
@@ -150,9 +151,11 @@ def load_series(folder):
     data.setdefault("statement", "")
     data.setdefault("featured", [])
     data.setdefault("captions", {})
+    data.setdefault("focal", {})
     data["statement"] = (data["statement"] or "").strip()
     data["featured"] = data["featured"] or []
     data["captions"] = data["captions"] or {}
+    data["focal"] = data["focal"] or {}
 
     if data["section"] not in SECTIONS:
         raise ContentError(f"{path}: section must be one of {SECTIONS}, not {data['section']!r}")
@@ -188,10 +191,16 @@ def load_series(folder):
     if not images:
         raise ContentError(f"{folder}: a series needs at least one image")
 
-    for key in ("cover", *data["featured"], *data["captions"]):
+    for key in ("cover", *data["featured"], *data["captions"], *data["focal"]):
         name = data["cover"] if key == "cover" else key
         if name not in images:
             raise ContentError(f"{path}: {name!r} is referenced but not in `images`")
+    # A focal point is where the frame is anchored when it must be cropped
+    # (the landing slideshow): "x% y%" from the top-left, so "50% 30%" keeps
+    # the upper part of a tall photo. Any CSS object-position value works.
+    for name, value in data["focal"].items():
+        if not isinstance(value, str) or not value.strip():
+            raise ContentError(f"{path}: focal point for {name!r} must be text like \"50% 30%\"")
 
     return Series(
         slug=folder.name, folder=folder, title=str(data["title"]),
@@ -199,6 +208,7 @@ def load_series(folder):
         layout=data["layout"], published=True, statement=data["statement"],
         cover=data["cover"], featured=list(data["featured"]), images=images,
         captions={k: str(v) for k, v in data["captions"].items()},
+        focal={k: v.strip() for k, v in data["focal"].items()},
     )
 
 

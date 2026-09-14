@@ -66,7 +66,11 @@ images:                   # the display order
   - 000038570010.jpg
 captions:                 # optional, filename: caption
   000038580006.jpg: Alabama Hills
+focal:                    # optional, filename: where to anchor a cropped frame
+  000038580006.jpg: 50% 30%
 ```
+
+`focal` matters on the landing slideshow, where every photograph is cropped to fill the screen. The value is a CSS `object-position`: `50% 50%` is the centre (the default), `50% 30%` keeps the upper part of a tall frame, `30% 50%` keeps the left of a wide one. Set it on a featured image whose crop looks wrong.
 
 4. Build. Any JPEG in the folder that is not listed under `images` is appended to the end with a warning, so you can drop files in first and arrange later.
 

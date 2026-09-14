@@ -77,3 +77,9 @@ Hanken Grotesk and Fraunces were the phase 1 placeholders. A comparison sheet of
 **Phase 2 built (2026-09-14): landing slideshow, 404, favicons, sitemap, OpenGraph, grid layout.**
 The slideshow ships only the first slide's `src` and loads each next slide one ahead, pauses when the tab is hidden, and holds the first frame under reduced motion. The scrim is a radial gradient behind the text block only. The header floats transparent and white over the hero; a backdrop-filter on the header would clip the mobile overlay, so it is dropped while the menu is open. Grid layout reuses the justified-row solver written for the index pages.
 
+**Landing navigation lives in the hero, not the header.**
+With the header floating over the slideshow, the top-right links disappeared against light skies. The landing page now has no header at all; wordmark, tagline, and the five section links sit centred inside one scrim, as on the old Squarespace cover page. Inner pages keep the header.
+
+**Per-image focal points.**
+Slides are cropped to the viewport, and some frames were framed awkwardly by a centre crop. `series.yaml` gains an optional `focal` map, filename to a CSS `object-position`, the same idea as Squarespace's focal point picker. It applies to the slideshow and to cover images; the curate page in phase 3 should let it be set by clicking.
+

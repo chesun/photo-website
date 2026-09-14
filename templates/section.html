@@ -20,7 +20,7 @@
         <span class="cover-image">
           <img src="{{ c.src }}" srcset="{{ c.srcset }}"
                sizes="(min-width: 900px) {{ c.width_pct }}vw, calc(100vw - 32px)"
-               width="{{ c.width }}" height="{{ c.height }}" alt=""
+               width="{{ c.width }}" height="{{ c.height }}" alt="" style="object-position:{{ c.focus }}"
                loading="{{ 'eager' if loop.index0 == 0 and row == rows[0] else 'lazy' }}" decoding="async">
         </span>
         <span class="cover-title">{{ c.title }}</span>

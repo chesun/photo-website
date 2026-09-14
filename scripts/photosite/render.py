@@ -94,6 +94,7 @@ class Renderer:
             "color": info.average_color,
             "alt": series.captions.get(filename) or series.title,
             "series_url": series.url,
+            "focus": series.focal.get(filename, "50% 50%"),
         }
 
     def cover(self, series, info, published):
@@ -110,6 +111,7 @@ class Renderer:
             "ratio": f"{info.aspect_ratio:.4f}",
             "color": info.average_color,
             "count": len(series.images),
+            "focus": series.focal.get(series.cover, "50% 50%"),
         }
 
 

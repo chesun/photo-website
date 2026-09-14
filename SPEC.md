@@ -132,6 +132,8 @@ images:                     # display order; this list IS the sequence
   - 000038570010.jpg
 captions:                   # optional, filename -> caption
   000038580006.jpg: Alabama Hills
+focal:                      # optional, filename -> CSS object-position for cropped uses
+  000038580006.jpg: 50% 30%
 ```
 
 Rules the build enforces:
@@ -193,7 +195,7 @@ Design vision: a quiet, gallery-white, editorial site where the design disappear
 
 Set a real type scale with intentional sizes and weights; body text max-width around 65ch. Type is the personality of the page; make the pairing feel chosen for a photographer, not defaulted.
 
-**Layout.** An 8px spacing scale used consistently. Header is minimal: wordmark left, five nav items right; on the landing page it sits transparent over the slideshow in white; on scroll and on inner pages it becomes a near-white bar with a subtle backdrop blur. Mobile: a full-screen overlay menu with the same restraint. Footer is one quiet line (name, Instagram, email).
+**Layout.** An 8px spacing scale used consistently. Header is minimal: wordmark left, five nav items right, a near-white bar with a subtle backdrop blur on every inner page. The landing page has no header; its navigation lives in the hero (see Landing slideshow). Mobile: a full-screen overlay menu with the same restraint. Footer is one quiet line (name, Instagram, email).
 
 ### Series pages: column layout (default)
 
@@ -220,7 +222,7 @@ The same justified rows at a smaller target height, about a fifth of the content
 
 ### Landing slideshow
 
-Full-viewport crossfading slideshow of every image marked `featured` across all published series: ~6s hold per image, ~1.4s opacity crossfade, and a barely-perceptible slow scale (1.0 → 1.04 over the hold) for life. First slide ships as a high-priority preload; subsequent slides load just-in-time. A soft gradient scrim sits only behind the overlaid wordmark and tagline (white, letterspaced). Pause the cycle when the tab is hidden. Under `prefers-reduced-motion`, show a single static image.
+Full-viewport crossfading slideshow of every image marked `featured` across all published series: ~6s hold per image, ~1.4s opacity crossfade, and a barely-perceptible slow scale (1.0 → 1.04 over the hold) for life. First slide ships as a high-priority preload; subsequent slides load just-in-time. Each slide is cropped to the viewport at its `focal` point from `series.yaml` (CSS `object-position`, default centre), so a tall frame can keep its sky or its ground. The site header is not shown on the landing page: the wordmark, the tagline (serif italic), and the five section links sit centred over the image, inside one soft radial scrim, so the navigation never competes with a light sky. A quiet line with Instagram and email sits at the foot. Pause the cycle when the tab is hidden. Under `prefers-reduced-motion`, show a single static image.
 
 **Motion.** One orchestrated moment per page, not scattered effects: page content fades in briefly on load; column and grid items reveal on scroll via IntersectionObserver with a subtle staggered fade-up (opacity + ~8px, ~300ms). All motion uses gentle easing and is fully disabled under `prefers-reduced-motion`.
 

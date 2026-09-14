@@ -24,7 +24,7 @@
 
   /* Space (8px scale) */
   --s1: 8px;  --s2: 16px; --s3: 24px; --s4: 32px; --s6: 48px;
-  --s8: 64px; --s12: 96px; --s16: 128px;
+  --s5: 40px; --s8: 64px; --s12: 96px; --s16: 128px;
 
   /* Layout. content-width and frame-max-height are mirrored in
      scripts/photosite/render.py for the <img sizes> attribute. */
@@ -116,18 +116,9 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 .site-nav a:hover { color: var(--ink); }
 .site-nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
 
-/* On the landing page the header floats over the slideshow in white. */
-.page-landing .site-header {
-  position: fixed; left: 0; right: 0;
-  background: transparent;
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-  color: #fff;
-}
-.page-landing .site-nav a { color: rgba(255, 255, 255, 0.78); }
-.page-landing .site-nav a:hover { color: #fff; }
-.page-landing .menu-toggle { color: #fff; }
-.page-landing.menu-open .site-header { color: var(--ink); }
-.page-landing.menu-open .menu-toggle { color: var(--ink); }
+/* The landing page has no header: the hero carries the wordmark and the
+   section links itself, centred inside the scrim. */
+.page-landing .site-header { display: none; }
 
 .menu-toggle {
   display: none;
@@ -322,7 +313,8 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
   text-align: center; color: #fff;
   padding: var(--s6) var(--gutter);
   /* the scrim: a soft radial gradient behind the text only, never the whole frame */
-  background: radial-gradient(ellipse 62% 50% at 50% 50%, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.12) 55%, rgba(0, 0, 0, 0) 100%);
+  background: radial-gradient(ellipse 64% 58% at 50% 50%, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.13) 55%, rgba(0, 0, 0, 0) 100%);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.28);
 }
 .hero-wordmark {
   font-family: var(--sans);
@@ -345,6 +337,22 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
   margin: var(--s3) auto 0;
   color: rgba(255, 255, 255, 0.92);
 }
+.hero-nav { margin-top: var(--s6); }
+.hero-nav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s1) var(--s5); }
+.hero-nav a {
+  display: inline-block; padding: var(--s2) 0;       /* 44px touch target */
+  font-family: var(--sans); font-size: 0.8125rem; font-weight: 400;
+  letter-spacing: 0.24em; text-indent: 0.24em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+  border-bottom: 1px solid transparent;
+  transition: color 200ms var(--ease), border-color 200ms var(--ease);
+}
+.hero-nav a:hover { color: #fff; border-bottom-color: rgba(255, 255, 255, 0.6); }
+@media (max-width: 600px) {
+  .hero-nav ul { flex-direction: column; align-items: center; gap: 0; }
+  .hero-nav a { padding: 10px 0; }
+}
+
 .hero-foot {
   position: absolute; left: 0; right: 0; bottom: var(--s3);
   margin: 0;
