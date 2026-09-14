@@ -1,0 +1,52 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Love on the Coast
+section: people
+order: 30
+tone: color
+layout: column
+published: true
+statement: A romantic engagement session for my good friend Seojung and her fiancé Seokchan,
+  during a weekend getaway at the Sonoma Coast.
+cover: seojung_seokchan_fave-29.jpg
+featured:
+- seojung_seokchan_fave-50.jpg
+- seojung_seokchan_fave-19.jpg
+- seojung_seokchan_fave-02.jpg
+- seojung_seokchan_fave-59.jpg
+- seojung_seokchan_fave-55.jpg
+images:
+- seojung_seokchan_fave-29.jpg
+- seojung_seokchan_fave-16.jpg
+- seojung_seokchan_fave-24.jpg
+- seojung_seokchan_fave-48.jpg
+- seojung_seokchan_fave-36.jpg
+- seojung_seokchan_fave-33.jpg
+- seojung_seokchan_fave-50.jpg
+- seojung_seokchan_fave-26.jpg
+- seojung_seokchan_fave-30.jpg
+- seojung_seokchan_fave-31.jpg
+- seojung_seokchan_fave-32.jpg
+- seojung_seokchan_fave-19.jpg
+- seojung_seokchan_fave-04.jpg
+- seojung_seokchan_fave-02.jpg
+- seojung_seokchan_fave-20.jpg
+- seojung_seokchan_fave-28.jpg
+- seojung_seokchan_fave-37.jpg
+- seojung_seokchan_fave-34.jpg
+- seojung_seokchan_fave-51.jpg
+- seojung_seokchan_fave-10.jpg
+- seojung_seokchan_fave-08.jpg
+- seojung_seokchan_fave-13.jpg
+- seojung_seokchan_fave-15.jpg
+- seojung_seokchan_fave-25.jpg
+- seojung_seokchan_fave-38.jpg
+- seojung_seokchan_fave-59.jpg
+- seojung_seokchan_fave-39.jpg
+- seojung_seokchan_fave-41.jpg
+- seojung_seokchan_fave-44.jpg
+- seojung_seokchan_fave-45.jpg
+- seojung_seokchan_fave-47.jpg
+- seojung_seokchan_fave-52.jpg
+- seojung_seokchan_fave-55.jpg
+captions: {}

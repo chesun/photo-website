@@ -1,0 +1,19 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: The City by the Sea
+section: archive
+order: 80
+tone: color
+layout: column
+published: true
+statement: ''
+cover: 725A8306-Edit.jpg
+featured: []
+images:
+- 725A8306-Edit.jpg
+- San-Francisco-Waking-Up-Smaller-Size.jpg
+- 725A8255-Edit-Edit.jpg
+captions:
+  725A8306-Edit.jpg: Lombard Street
+  San-Francisco-Waking-Up-Smaller-Size.jpg: San Francisco Waking Up
+  725A8255-Edit-Edit.jpg: Nature's Frame

@@ -1,0 +1,27 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Outskirts
+section: archive
+order: 30
+tone: color
+layout: column
+published: true
+statement: Wandering on the outskirts of cities and towns, one catches a glimpse of another
+  side of California.
+cover: farm_track.jpg
+featured: []
+images:
+- farm_track.jpg
+- grass_sky.jpg
+- irrigation.jpg
+- palm.jpg
+- port_sac.jpg
+- industrial_plant_man.jpg
+- ag-plant.jpg
+- turn.jpg
+- beehouse.jpg
+- sunset-gradient.jpg
+- redbarn.jpg
+- 012.jpg
+- 009.jpg
+captions: {}

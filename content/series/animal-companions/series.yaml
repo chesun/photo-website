@@ -1,0 +1,15 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Animal Companions
+section: archive
+order: 90
+tone: color
+layout: column
+published: true
+statement: ''
+cover: seojung_seokchan_like-79.jpg
+featured: []
+images:
+- seojung_seokchan_like-79.jpg
+- april_2023_contax-07.jpg
+captions: {}

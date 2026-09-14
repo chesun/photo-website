@@ -66,3 +66,7 @@ Choices made while building, all reversible:
 - Image variants are 480, 1600, and 2400px on the long edge at JPEG quality 82. On a retina display the browser picks the 2400px file for column layout, so a series page is heavy; revisit in the phase 4 performance pass.
 - The dev server restarts itself when a build script changes, since Python does not reload imported modules.
 
+## 2026-09-14
+
+**Photographs stay in git.**
+Keeping the JPEGs out of the repository was tried and reversed the same day. Out of git, the images would need their own backup, a fresh clone could not build, and deployment would have to run from the one machine that has them instead of from GitHub Actions. The cost of keeping them in is repository size, about 225MB now, growing with each re-export; GitHub's limits (1GB recommended, 100MB per file) are far off. The repository stays the complete source of truth.

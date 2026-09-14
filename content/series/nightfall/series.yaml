@@ -1,0 +1,26 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Nightfall
+section: archive
+order: 20
+tone: color
+layout: column
+published: true
+statement: Things do not go to die in the darkness of night - they instead come alive with
+  a certain mystery that few will see or appreciate. When the lights are on but no one is
+  around, then and there you will find the true spirit of the night, when you open your heart
+  and let it guide your eyes.
+cover: 008.jpg
+featured: []
+images:
+- 008.jpg
+- 004.jpg
+- 000080800013.jpg
+- 000080800015.jpg
+- 000080800019.jpg
+- 000080800005.jpg
+- 000080790020.jpg
+- 0000807900022.jpg
+- 000080790013.jpg
+- 000080790009.jpg
+captions: {}

@@ -1,0 +1,17 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Life and Adventure
+section: archive
+order: 110
+tone: color
+layout: column
+published: false
+statement: ''
+cover: seojung_seokchan_like-77.jpg
+featured: []
+images:
+- seojung_seokchan_like-77.jpg
+- june_2023_m4p-09.jpg
+- 725A9614.jpg
+- Serenity.jpg
+captions: {}

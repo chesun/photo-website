@@ -66,6 +66,7 @@ Not migrated: the blog (one 2019 post), the demo print store (lorem ipsum placeh
 - Output is plain static HTML, CSS, and vanilla JavaScript. No React, no Node toolchain, no CMS, no database.
 - Python 3.11+ build script using Jinja2 (templates), Pillow (images), and PyYAML. `requirements.txt`; venv documented in README.
 - Build output in a gitignored `dist/`.
+- Photographs are committed to git alongside their YAML; the repository is the complete source of truth and a fresh clone builds the whole site.
 - Deploy via GitHub Pages with a GitHub Actions workflow and a `CNAME` file for `christinasunphoto.com`.
 - The only frontend dependency is PhotoSwipe, vendored into the repo. Zero external requests; fonts self-hosted.
 - Contact form posts to a Formspree action URL left as a clearly marked placeholder.

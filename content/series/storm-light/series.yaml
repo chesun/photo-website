@@ -1,0 +1,25 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Storm Light
+section: landscape
+order: 20
+tone: monochrome
+layout: column
+published: true
+statement: ''
+cover: 725A3687-Pano-Edit.jpg
+featured: []
+images:
+- 725A3687-Pano-Edit.jpg
+- 725A4372-Edit.jpg
+- 725A3707.jpg
+- 725A4045.jpg
+- 725A4243-Edit.jpg
+- 725A9895.jpg
+captions:
+  725A3687-Pano-Edit.jpg: Impending Storm
+  725A4372-Edit.jpg: Giants of Time
+  725A3707.jpg: Setting Sail
+  725A4045.jpg: Going to the Sun
+  725A4243-Edit.jpg: Heaven's Door
+  725A9895.jpg: Mystique

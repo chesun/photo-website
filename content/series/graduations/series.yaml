@@ -1,0 +1,42 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Graduations
+section: people
+order: 50
+tone: color
+layout: column
+published: true
+statement: ''
+cover: derek_k_grad-036.jpg
+featured:
+- derek_k_grad-044.jpg
+images:
+- derek_k_grad-036.jpg
+- rachel_k_grad-088.jpg
+- derek_k_grad-038.jpg
+- rachel_k_grad-414.jpg
+- untitled-shoot-317.jpg
+- jorge_grad-011.jpg
+- kairo_grad-477.jpg
+- derek_k_grad-067.jpg
+- rachel_k_grad-570.jpg
+- kairo_grad-417.jpg
+- derek_k_grad-004.jpg
+- untitled-shoot-296.jpg
+- kairo_grad-222.jpg
+- rachel_k_grad-661.jpg
+- untitled-shoot-008.jpg
+- jorge_grad-005.jpg
+- untitled-shoot-298.jpg
+- rachel_k_grad-124.jpg
+- jorge_grad-013.jpg
+- untitled-shoot-275.jpg
+- derek_k_grad-044.jpg
+- kairo_grad-374.jpg
+- rachel_k_grad-461.jpg
+captions:
+  untitled-shoot-317.jpg: untitled shoot-317.jpg
+  untitled-shoot-296.jpg: untitled shoot-296.jpg
+  untitled-shoot-008.jpg: untitled shoot-008.jpg
+  untitled-shoot-298.jpg: untitled shoot-298.jpg
+  untitled-shoot-275.jpg: untitled shoot-275.jpg

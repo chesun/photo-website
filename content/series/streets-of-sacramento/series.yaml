@@ -1,0 +1,32 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Streets of Sacramento
+section: archive
+order: 60
+tone: monochrome
+layout: column
+published: true
+statement: ''
+cover: 2463331_2463331-R1-E016.jpg
+featured: []
+images:
+- 2463331_2463331-R1-E016.jpg
+- 2463329_2463329-R1-E014.jpg
+- 2463329_2463329-R1-E009.jpg
+- Crossroads.jpg
+- 2463332_2463332-R1-E008.jpg
+- Bride-and-Bridesmaids.jpg
+- Church-steps.jpg
+- 2463332_2463332-R1-E005.jpg
+- 2463330_2463330-R1-E010.jpg
+- City-Hall.jpg
+- 2463329_2463329-R1-E002.jpg
+- 2463331_2463331-R1-E002.jpg
+- 2463332_2463332-R1-E019.jpg
+- 0009193_0009193-R2-E019.jpg
+- 0009193_0009193-R2-E029.jpg
+- 0009193_0009193-R1-E002.jpg
+- “Entangled”.jpg
+- 2463331_2463331-R1-E013.jpg
+- 2462532_2462532-R2-E020.jpg
+captions: {}

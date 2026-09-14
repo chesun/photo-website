@@ -1,0 +1,63 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: From the Earth to the Stars
+section: people
+order: 10
+tone: color
+layout: column
+published: true
+statement: ''
+cover: adriana-paige-09.jpg
+featured:
+- adriana-paige-09.jpg
+- adriana-paige-26.jpg
+- adriana-paige-18.jpg
+- adriana-paige-37.jpg
+images:
+- adriana-paige-09.jpg
+- adriana-paige-08.jpg
+- adriana-paige-31.jpg
+- adriana-paige-13.jpg
+- adriana-paige-26.jpg
+- adriana-paige-45.jpg
+- adriana-paige-22.jpg
+- adriana-paige-30.jpg
+- adriana-paige-08-2.jpg
+- adriana-paige-28.jpg
+- adriana-paige-42.jpg
+- adriana-paige-11.jpg
+- adriana-paige-06.jpg
+- adriana-paige-20.jpg
+- adriana-paige-41.jpg
+- adriana-paige-40.jpg
+- adriana-paige-07.jpg
+- adriana-paige-27.jpg
+- adriana-paige-39.jpg
+- adriana-paige-44.jpg
+- adriana-paige-16.jpg
+- adriana-paige-02.jpg
+- adriana-paige-29.jpg
+- adriana-paige-43.jpg
+- adriana-paige-25.jpg
+- adriana-paige-01.jpg
+- adriana-paige-14.jpg
+- adriana-paige-18.jpg
+- adriana-paige-03.jpg
+- adriana-paige-34.jpg
+- adriana-paige-37.jpg
+- adriana-paige-24.jpg
+- adriana-paige-17.jpg
+- adriana-paige-32.jpg
+- adriana-paige-05.jpg
+- adriana-paige-33.jpg
+- adriana-paige-48.jpg
+- adriana-paige-38.jpg
+- adriana-paige-35.jpg
+- adriana-paige-19.jpg
+- adriana-paige-04.jpg
+- adriana-paige-36.jpg
+captions:
+  adriana-paige-09.jpg: Adriana and Paige’s love is a poem spanning the universe - one rooted
+    in the Earth, the other drawn to the stars. Having been there since the beginning of their
+    story, I am so happy to bear witness to the start of a new chapter in their life togethe
+  adriana-paige-08-2.jpg: adriana-paige-08.jpg

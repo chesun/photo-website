@@ -1,0 +1,25 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: An Instant of Forever
+section: people
+order: 20
+tone: color
+layout: column
+published: true
+statement: ''
+cover: ap-polaroids-01.jpg
+featured: []
+images:
+- ap-polaroids-01.jpg
+- ap-polaroids-12.jpg
+- ap-polaroids-02.jpg
+- ap-polaroids-06.jpg
+- ap-polaroids-04.jpg
+- ap-polaroids-09.jpg
+- ap-polaroids-10.jpg
+- ap-polaroids-11.jpg
+- ap-polaroids-03.jpg
+- ap-polaroids-14.jpg
+- ap-polaroids-16.jpg
+- ap-polaroids-17.jpg
+captions: {}

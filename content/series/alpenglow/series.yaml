@@ -1,0 +1,29 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Alpenglow
+section: landscape
+order: 10
+tone: color
+layout: column
+published: true
+statement: ''
+cover: 725A3408-Edit.jpg
+featured:
+- 725A2751.jpg
+- Trillium-Lake-Milky-Way-Pano-v2-Orton-Web.jpg
+- 725A4652-Edit.jpg
+- 725A9264-Edit.jpg
+images:
+- 725A3408-Edit.jpg
+- 725A3553-Edit.jpg
+- 725A2751.jpg
+- Trillium-Lake-Milky-Way-Pano-v2-Orton-Web.jpg
+- 725A4652-Edit.jpg
+- 725A9879-Recovered-Edit.jpg
+- _DSC7243-Edit.jpg
+- 725A9264-Edit.jpg
+- _DSC7640-Edit.jpg
+- Moonbow-Glacier-Point-Small.jpg
+- _DSC7774-Edit.jpg
+- 20190818-725A0947-Edit.jpg
+captions: {}

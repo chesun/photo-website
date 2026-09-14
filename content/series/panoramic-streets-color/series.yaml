@@ -1,0 +1,19 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: 'Panoramic Streets: Color'
+section: archive
+order: 50
+tone: color
+layout: column
+published: true
+statement: ''
+cover: 0009193_0009193-R2-E030.jpg
+featured: []
+images:
+- 0009193_0009193-R2-E030.jpg
+- 0009193_0009193-R1-E009.jpg
+- 0009193_0009193-R2-E017.jpg
+- 0009193_0009193-R2-E014.jpg
+- 0009193_0009193-R2-E015.jpg
+- 0009193_0009193-R1-E005.jpg
+captions: {}

@@ -1,0 +1,30 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Meditation on Solitude
+section: archive
+order: 10
+tone: color
+layout: column
+published: true
+statement: Solitude is a slow poison that corrupts the core of the human spirit, but it can
+  also become a liberating force, a fountain of creative freedom. These photos are my thoughts,
+  musings, and feelings projected onto the world and captured on film during the solitary
+  months of self isolation in the COVID-19 pandemic.
+cover: 000013280016.jpg
+featured: []
+images:
+- 000013280016.jpg
+- 000013280011.jpg
+- 000013250038.jpg
+- 000013280013.jpg
+- 000013280010.jpg
+- 000013280018.jpg
+- 000013280021.jpg
+- 000013210008.jpg
+- 000013280027.jpg
+- 000013280032.jpg
+- 000013280037.jpg
+- 000013260027.jpg
+- 000013170018.jpg
+- 000013210011.jpg
+captions: {}

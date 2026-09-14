@@ -1,0 +1,25 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Streets of Davis
+section: archive
+order: 100
+tone: color
+layout: column
+published: false
+statement: ''
+cover: 725A8752.jpg
+featured: []
+images:
+- 725A8752.jpg
+- DSCF1143.jpg
+- 725A8762.jpg
+- 0008530_0008530-R1-E007.jpg
+- DSCF1164.jpg
+- DSCF1202.jpg
+- DSCF1213.jpg
+- DSCF1207.jpg
+- DSCF1209.jpg
+- DSCF1211.jpg
+- DSCF1216.jpg
+- 725A8741.jpg
+captions: {}

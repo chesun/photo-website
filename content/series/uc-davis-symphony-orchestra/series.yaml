@@ -1,0 +1,30 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: UC Davis Symphony Orchestra
+section: archive
+order: 70
+tone: color
+layout: column
+published: true
+statement: ''
+cover: _DSC5910.jpg
+featured: []
+images:
+- _DSC5910.jpg
+- _DSC5730.jpg
+- _DSC6078.jpg
+- _DSC5891.jpg
+- _DSC6298.jpg
+- _DSC5974.jpg
+- _DSC6193.jpg
+- _DSC5929.jpg
+- _DSC6822.jpg
+- _DSC6718.jpg
+- _DSC5645.jpg
+- _DSC5690.jpg
+- _DSC6381.jpg
+- _DSC5943.jpg
+- _DSC6655.jpg
+- _DSC9087.jpg
+- _DSC5978.jpg
+captions: {}

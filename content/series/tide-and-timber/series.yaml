@@ -1,0 +1,34 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Tide and Timber
+section: people
+order: 40
+tone: color
+layout: column
+published: true
+statement: A love story from the redwoods to the sea, told in Polaroids.
+cover: img20230906_19272149.jpg
+featured: []
+images:
+- img20230906_19272149.jpg
+- img20230906_18275700.jpg
+- img20230906_18310997.jpg
+- img20230906_18324641.jpg
+- img20230906_19051839.jpg
+- img20230906_19254509.jpg
+- img20230906_18430192.jpg
+- img20230906_19344051.jpg
+- img20230906_18443518.jpg
+- img20230906_18460862.jpg
+- img20230906_18540972.jpg
+- img20230906_18554607.jpg
+- img20230906_19034660.jpg
+- img20230906_19083328.jpg
+- img20230906_19240927.jpg
+- img20230906_18293273.jpg
+- img20230906_19285492.jpg
+- img20230906_19361528.jpg
+- img20230906_19374849.jpg
+- img20230906_19392187.jpg
+- img20230906_19432350.jpg
+captions: {}

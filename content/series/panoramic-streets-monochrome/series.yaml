@@ -1,0 +1,32 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: 'Panoramic Streets: Monochrome'
+section: archive
+order: 40
+tone: monochrome
+layout: column
+published: true
+statement: ''
+cover: Running-into-the-light.jpg
+featured: []
+images:
+- Running-into-the-light.jpg
+- 2463332_2463332-R1-E016.jpg
+- 2463332_2463332-R1-E017.jpg
+- Kids.jpg
+- Layered-reflections.jpg
+- Lines.jpg
+- Wings.jpg
+- Around-the-corner.jpg
+- 2462532_2462532-R1-E006-2.jpg
+- 2462532_2462532-R1-E008-3.jpg
+- 2463329_2463329-R1-E001.jpg
+- 2463331_2463331-R1-E008.jpg
+- 2463331_2463331-R1-E020.jpg
+- 2463332_2463332-R1-E004.jpg
+- 2463332_2463332-R1-E009.jpg
+- 2463332_2463332-R1-E010.jpg
+- 2463332_2463332-R1-E011.jpg
+- 2463332_2463332-R1-E014.jpg
+- 2463332_2463332-R1-E015.jpg
+captions: {}

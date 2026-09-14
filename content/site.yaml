@@ -1,0 +1,33 @@
+# Global site configuration. Read by scripts/build.py.
+
+title: Christina Sun
+tagline: >-
+  Wild and human-altered landscapes documenting the tales of nature,
+  stories of people, and everything in between.
+# Used in <meta name="description"> and OpenGraph tags. Written fresh for the
+# new site; the old Squarespace description was stale.
+description: >-
+  Christina Sun is a photographer working in wild and human-altered landscapes,
+  mostly on film, and in portraits of the people she meets along the way.
+
+# Navigation, in order. `slug` is the URL segment and the value of `section`
+# in each series.yaml; `label` is what the header shows.
+nav:
+  - slug: landscape
+    label: Landscape
+  - slug: people
+    label: People
+  - slug: interludes
+    label: Interludes
+  - slug: archive
+    label: Archive
+  - slug: about
+    label: About
+
+instagram: https://instagram.com/chesunphotography
+email: christinasunphotography@gmail.com
+base_url: https://christinasunphoto.com
+
+# Contact form endpoint. Create a form at https://formspree.io and paste its
+# action URL here; until then the form posts nowhere.
+formspree_action: "https://formspree.io/f/PLACEHOLDER"

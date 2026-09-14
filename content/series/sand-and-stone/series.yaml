@@ -1,0 +1,31 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Sand and Stone
+section: landscape
+order: 30
+tone: monochrome
+layout: column
+published: true
+statement: Photos from my January 2024 trip to the Eastern Sierra and Death Valley. A variety
+  of B&W film stocks.
+cover: 000038580006.jpg
+featured:
+- 000038580003.jpg
+- 000038570014.jpg
+images:
+- 000038580006.jpg
+- 000038570010.jpg
+- 000038570008.jpg
+- 000038580014.jpg
+- 000038580005.jpg
+- 000038580003.jpg
+- 000038570014.jpg
+- 000038580001.jpg
+- 000038580002.jpg
+captions:
+  000038580006.jpg: Whitney Portal
+  000038570010.jpg: Campground
+  000038570008.jpg: Manzanar
+  000038580005.jpg: Mount Whitney
+  000038580003.jpg: Death Valley
+  000038580001.jpg: Life

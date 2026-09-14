@@ -1,0 +1,22 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Quiet Days
+section: interludes
+order: 10
+tone: color
+layout: column
+published: true
+statement: ''
+cover: untitled-shoot-057.jpg
+featured: []
+images:
+- untitled-shoot-057.jpg
+- untitled-shoot-230.jpg
+- untitled-shoot-058.jpg
+- 000019160007.jpg
+- 000019160002.jpg
+- 000019160013.jpg
+captions:
+  untitled-shoot-057.jpg: untitled shoot-057.jpg
+  untitled-shoot-230.jpg: untitled shoot-230.jpg
+  untitled-shoot-058.jpg: untitled shoot-058.jpg
