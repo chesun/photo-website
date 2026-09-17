@@ -137,8 +137,9 @@ def load_site(path):
     return Site(**data)
 
 
-def load_series(folder):
-    """Load one series folder. Returns None for an unpublished series."""
+def load_series(folder, include_unpublished=False):
+    """Load one series folder. Returns None for an unpublished series unless
+    `include_unpublished` is set (the curate page edits those too)."""
     path = folder / "series.yaml"
     if not path.exists():
         raise ContentError(f"{folder}: no series.yaml")
@@ -167,7 +168,7 @@ def load_series(folder):
         raise ContentError(f"{path}: order must be a whole number")
     if not isinstance(data["published"], bool):
         raise ContentError(f"{path}: published must be true or false")
-    if not data["published"]:
+    if not data["published"] and not include_unpublished:
         return None
 
     # The files actually in the folder.
@@ -205,7 +206,7 @@ def load_series(folder):
     return Series(
         slug=folder.name, folder=folder, title=str(data["title"]),
         section=data["section"], order=data["order"], tone=data["tone"],
-        layout=data["layout"], published=True, statement=data["statement"],
+        layout=data["layout"], published=data["published"], statement=data["statement"],
         cover=data["cover"], featured=list(data["featured"]), images=images,
         captions={k: str(v) for k, v in data["captions"].items()},
         focal={k: v.strip() for k, v in data["focal"].items()},

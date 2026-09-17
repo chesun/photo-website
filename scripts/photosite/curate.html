@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curate — christinasunphoto.com</title>
+<style>
+  :root { --bg: #f4f3ef; --ink: #1a1a1a; --mute: #77766f; --line: #dad8d0; --accent: #1a1a1a; --warn: #b3261e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 -apple-system, "Inter", "Helvetica Neue", sans-serif; }
+  header.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 12px 24px; background: rgba(244,243,239,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  header.top h1 { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; font-weight: 500; margin: 0 auto 0 0; }
+  .hint { color: var(--mute); font-size: 12px; }
+  button { font: inherit; border: 1px solid var(--ink); background: var(--ink); color: #fff; padding: 6px 14px; border-radius: 4px; cursor: pointer; }
+  button.secondary { background: transparent; color: var(--ink); }
+  button:disabled { opacity: .35; cursor: default; }
+  main { padding: 16px 24px 80px; }
+  h2.section { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); margin: 36px 0 12px; font-weight: 500; }
+  .series { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px 16px; margin-bottom: 14px; }
+  .series.dirty { border-color: var(--ink); }
+  .series-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .series-head .title { font-size: 17px; font-weight: 500; }
+  .series-head .meta { color: var(--mute); font-size: 12px; }
+  .series-head .save { margin-left: auto; }
+  .series.error { color: var(--warn); }
+  .strip { display: flex; flex-wrap: wrap; gap: 8px; }
+  .photo { position: relative; height: 150px; border-radius: 3px; overflow: hidden; background: #ddd; cursor: grab; flex: 0 0 auto; }
+  .photo img { height: 100%; width: auto; display: block; pointer-events: none; }
+  .photo.dragging { opacity: .35; }
+  .photo.over { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .badge { position: absolute; left: 6px; top: 6px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; background: rgba(255,255,255,.92); padding: 2px 6px; border-radius: 3px; }
+  .tools { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 4px; opacity: 0; transition: opacity 120ms; }
+  .photo:hover .tools, .photo.featured .tools { opacity: 1; }
+  .tools button { padding: 3px 7px; font-size: 11px; border-radius: 3px; background: rgba(255,255,255,.92); color: var(--ink); border: 0; }
+  .tools button.on { background: var(--ink); color: #fff; }
+  .caption { position: absolute; left: 0; right: 0; bottom: 0; font-size: 10px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.55)); padding: 14px 6px 4px; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* landing preview */
+  .landing { display: flex; gap: 8px; flex-wrap: wrap; }
+  .slide { width: 224px; aspect-ratio: 16 / 9; background: #ddd; overflow: hidden; border-radius: 3px; position: relative; cursor: pointer; }
+  .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .slide .badge { left: auto; right: 6px; }
+  /* focal overlay */
+  .overlay { position: fixed; inset: 0; z-index: 20; background: rgba(20,20,20,.94); display: none; align-items: center; justify-content: center; gap: 24px; padding: 24px; color: #fff; }
+  .overlay.open { display: flex; }
+  .focal-stage { position: relative; max-width: 58vw; max-height: 84vh; cursor: crosshair; }
+  .focal-stage img { max-width: 58vw; max-height: 84vh; display: block; }
+  .focal-dot { position: absolute; width: 18px; height: 18px; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(0,0,0,.6); pointer-events: none; }
+  .focal-side { width: 30vw; display: flex; flex-direction: column; gap: 12px; }
+  .preview { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #000; border-radius: 3px; }
+  .preview.tall { aspect-ratio: 9 / 16; width: 40%; }
+  .preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .focal-side .row { display: flex; gap: 8px; align-items: center; }
+  .focal-side .hint { color: #bbb; }
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 4px; font-size: 13px; display: none; z-index: 30; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Curate</h1>
+  <span class="hint">Drag to reorder · click a photo to make it the cover · ★ puts it in the landing slideshow · ⌖ sets where a crop is anchored</span>
+  <button id="save-all" disabled>Save all</button>
+</header>
+<main id="main"><p class="hint">Loading…</p></main>
+
+<div class="overlay" id="overlay">
+  <div class="focal-stage" id="stage"><img id="stage-img" alt=""><div class="focal-dot" id="dot"></div></div>
+  <div class="focal-side">
+    <div><strong id="focal-title"></strong><div class="hint" id="focal-file"></div></div>
+    <div class="hint">Click on the photograph where the crop should be anchored. The previews show the landing slideshow crop on a wide screen and on a phone.</div>
+    <div class="preview" id="prev-wide"><img id="prev-wide-img" alt=""></div>
+    <div class="preview tall" id="prev-tall"><img id="prev-tall-img" alt=""></div>
+    <div class="row"><span>Focal point:</span><code id="focal-value">50% 50%</code><button class="secondary" id="focal-reset" style="color:#fff;border-color:#888">Reset to centre</button></div>
+    <div class="row"><button id="focal-done">Done</button><button class="secondary" id="focal-cancel" style="color:#fff;border-color:#888">Cancel</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const state = { sections: [], series: [], dirty: new Set() };
+const $ = (sel, el = document) => el.querySelector(sel);
+const img = (slug, size, file) => `/_curate/img/${encodeURIComponent(slug)}/${size}/${encodeURIComponent(file)}`;
+
+async function load() {
+  const data = await (await fetch('/_curate/data')).json();
+  state.sections = data.sections; state.series = data.series; state.dirty.clear();
+  render();
+}
+
+function toast(msg, ms = 1800) {
+  const t = $('#toast'); t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', ms);
+}
+
+function markDirty(s) { state.dirty.add(s.slug); render(); }
+
+// ----------------------------------------------------------------------
+// Rendering
+// ----------------------------------------------------------------------
+
+function render() {
+  const main = $('#main'); main.innerHTML = '';
+  // Landing preview: featured images in the order the show runs (section, series order, featured order).
+  const h = document.createElement('h2'); h.className = 'section'; h.textContent = 'Landing slideshow, in order';
+  main.appendChild(h);
+  const landing = document.createElement('div'); landing.className = 'landing';
+  let n = 0;
+  for (const s of state.series) {
+    if (s.error || !s.published) continue;
+    for (const f of s.featured) {
+      n++;
+      const d = document.createElement('div'); d.className = 'slide'; d.title = `${s.title} — ${f}`;
+      d.innerHTML = `<img src="${img(s.slug, 'medium', f)}" style="object-position:${s.focal[f] || '50% 50%'}"><span class="badge">${n}</span>`;
+      d.onclick = () => openFocal(s, f);
+      landing.appendChild(d);
+    }
+  }
+  if (!n) landing.innerHTML = '<p class="hint">No featured images yet. Star some below.</p>';
+  main.appendChild(landing);
+
+  for (const section of state.sections) {
+    const list = state.series.filter(s => s.section === section || (s.error && section === state.sections[0]));
+    if (!list.length) continue;
+    const h2 = document.createElement('h2'); h2.className = 'section'; h2.textContent = section; main.appendChild(h2);
+    for (const s of list) main.appendChild(renderSeries(s));
+  }
+  $('#save-all').disabled = state.dirty.size === 0;
+}
+
+function renderSeries(s) {
+  const box = document.createElement('section'); box.className = 'series' + (state.dirty.has(s.slug) ? ' dirty' : '') + (s.error ? ' error' : '');
+  if (s.error) { box.innerHTML = `<div class="series-head"><span class="title">${s.slug}</span></div><div>${s.error}</div>`; return box; }
+  box.innerHTML = `<div class="series-head"><span class="title">${s.title}</span><span class="meta">${s.tone} · ${s.images.length} photographs${s.published ? '' : ' · unpublished'}</span><button class="save" ${state.dirty.has(s.slug) ? '' : 'disabled'}>Save</button></div>`;
+  $('.save', box).onclick = () => save(s);
+  const strip = document.createElement('div'); strip.className = 'strip';
+  s.images.forEach((f, i) => {
+    const p = document.createElement('div'); p.className = 'photo' + (s.featured.includes(f) ? ' featured' : ''); p.draggable = true; p.dataset.i = i;
+    p.innerHTML = `<img src="${img(s.slug, 'thumb', f)}" alt="">`
+      + (s.cover === f ? '<span class="badge">Cover</span>' : '')
+      + `<div class="tools"><button class="star ${s.featured.includes(f) ? 'on' : ''}" title="Landing slideshow">★</button><button class="focal" title="Focal point">⌖</button></div>`
+      + (s.captions[f] ? `<span class="caption">${s.captions[f]}</span>` : '');
+    p.onclick = (e) => { if (e.target.tagName === 'BUTTON') return; s.cover = f; markDirty(s); };
+    $('.star', p).onclick = () => { const k = s.featured.indexOf(f); if (k >= 0) s.featured.splice(k, 1); else s.featured.push(f); markDirty(s); };
+    $('.focal', p).onclick = () => openFocal(s, f);
+    // drag and drop within the series
+    p.addEventListener('dragstart', (e) => { strip._from = i; p.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    p.addEventListener('dragend', () => p.classList.remove('dragging'));
+    p.addEventListener('dragover', (e) => { e.preventDefault(); p.classList.add('over'); });
+    p.addEventListener('dragleave', () => p.classList.remove('over'));
+    p.addEventListener('drop', (e) => {
+      e.preventDefault(); p.classList.remove('over');
+      const from = strip._from; if (from === undefined || from === i) return;
+      const [moved] = s.images.splice(from, 1); s.images.splice(i, 0, moved);
+      markDirty(s);
+    });
+    strip.appendChild(p);
+  });
+  box.appendChild(strip);
+  return box;
+}
+
+// ----------------------------------------------------------------------
+// Saving
+// ----------------------------------------------------------------------
+
+async function save(s) {
+  const r = await fetch('/_curate/save', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slug: s.slug, images: s.images, cover: s.cover, featured: s.featured, focal: s.focal }) });
+  const out = await r.json();
+  if (!r.ok) { toast('Not saved: ' + out.error, 5000); return; }
+  state.dirty.delete(s.slug); toast(`Saved ${s.title}`); render();
+}
+$('#save-all').onclick = async () => { for (const s of state.series) if (state.dirty.has(s.slug)) await save(s); };
+window.addEventListener('beforeunload', (e) => { if (state.dirty.size) { e.preventDefault(); e.returnValue = ''; } });
+
+// ----------------------------------------------------------------------
+// Focal point overlay
+// ----------------------------------------------------------------------
+
+let focal = null;   // { s, f, value, original }
+function openFocal(s, f) {
+  focal = { s, f, value: s.focal[f] || '50% 50%', original: s.focal[f] };
+  $('#stage-img').src = img(s.slug, 'medium', f);
+  $('#prev-wide-img').src = $('#prev-tall-img').src = $('#stage-img').src;
+  $('#focal-title').textContent = s.title; $('#focal-file').textContent = f;
+  applyFocal(); $('#overlay').classList.add('open');
+}
+function applyFocal() {
+  const [x, y] = focal.value.split(' ');
+  $('#dot').style.left = x; $('#dot').style.top = y;
+  $('#prev-wide-img').style.objectPosition = $('#prev-tall-img').style.objectPosition = focal.value;
+  $('#focal-value').textContent = focal.value;
+}
+$('#stage').onclick = (e) => {
+  const r = $('#stage-img').getBoundingClientRect();
+  const x = Math.round(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * 100);
+  const y = Math.round(Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1) * 100);
+  focal.value = `${x}% ${y}%`; applyFocal();
+};
+$('#focal-reset').onclick = () => { focal.value = '50% 50%'; applyFocal(); };
+$('#focal-done').onclick = () => {
+  if (focal.value === '50% 50%') delete focal.s.focal[focal.f]; else focal.s.focal[focal.f] = focal.value;
+  if ((focal.original || '50% 50%') !== focal.value) markDirty(focal.s);
+  $('#overlay').classList.remove('open'); focal = null;
+};
+$('#focal-cancel').onclick = () => { $('#overlay').classList.remove('open'); focal = null; };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && focal) $('#focal-cancel').onclick(); });
+
+load();
+</script>
+</body>
+</html>

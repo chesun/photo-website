@@ -87,9 +87,10 @@ content/
 templates/                   # Jinja2
 static/                      # css, js, fonts, PhotoSwipe, favicons
 scripts/
-  build.py                   # entry point: build, --serve, --curate
+  build.py                   # entry point: build, --serve
   migrate_squarespace.py     # one-time import from the live Squarespace site
-  curate/                    # local-only drag-to-reorder page (see Curate)
+  make_favicons.py           # generates static/favicon.* once
+  photosite/                 # the build package: content, images, render, serve, curate
 dist/                        # generated site (gitignored)
 .cache/                      # image-processing cache (gitignored)
 .github/workflows/deploy.yml
@@ -171,13 +172,15 @@ Run once, before the Squarespace subscription is cancelled. After that the Squar
 
 ## Curate page (local only)
 
-Served by `--serve` at `/_curate/`, never written to `dist/`. Modeled on `bin/curate.py` in the `chesun.github.io` repo, which already works: a stdlib `http.server` page that shows every series' thumbnails, lets you drag to reorder, and writes the order back on Save.
+Served by `--serve` at `/_curate/`, never written to `dist/`. Modeled on `bin/curate.py` in the `chesun.github.io` repo: a stdlib `http.server` page that shows every series' thumbnails, lets you drag to reorder, and writes the order back on Save.
 
-For this site it must:
+What it does:
 
-- Show one row per series, grouped by section, thumbnails at ~160px.
-- Drag to reorder; click a thumbnail to set it as `cover`; toggle a star to add or remove it from `featured`.
-- Save writes `images`, `cover`, and `featured` back into that `series.yaml`, preserving every other key and comment order. Nothing else is editable here; titles and statements are edited in the YAML.
+- One strip per series, grouped by section, published or not, thumbnails about 150px tall, captions shown on the thumbnail.
+- Drag to reorder; click a thumbnail to set it as `cover`; star it to add or remove it from `featured`; a focal-point tool that shows the frame large, takes a click to place the anchor, and previews the resulting crop at 16:9 and 9:16.
+- A strip at the top showing the landing slideshow in the order it will run (section, series order, featured order), each slide cropped to 16:9 at its focal point; clicking one opens the focal tool. This is where the "review by eye" pass happens.
+- Save writes `images`, `cover`, `featured`, and `focal` into that `series.yaml` by replacing those blocks in the text, so every other key and comment survives. The server re-validates what it wrote; a bad save (a cover that is not in the series, an image list that no longer matches the folder, a malformed focal point) is refused with a message and nothing is written. The dev server's watcher then rebuilds the site.
+- Thumbnails and medium copies come from the image cache through a `/_curate/img/` route, so unpublished series show without a build.
 - No dependencies beyond the standard library and PyYAML.
 
 This replaces the one thing Squarespace did well: arranging photos by eye.
@@ -249,7 +252,7 @@ Build in four phases. Each phase ends with a full build, `--serve`, screenshots 
 
 1. **Content and series pages.** Content model, `migrate_squarespace.py` run against the live site, image pipeline with variants, EXIF stripping, hash cache, aspect-ratio boxes and average color, series pages in column layout, lightbox, header and footer, `--serve`. Verified with the real migrated content, not placeholders.
 2. **Site chrome.** Landing slideshow with scrim and reduced-motion fallback, section indexes, Archive index, About, 404, sitemap and OpenGraph tags, favicons, motion, mobile menu. Grid layout implemented and tested on one series, then switched back to column.
-3. **Curate page.** Reorder, cover, featured, save. Verified by reordering a series and rebuilding.
+3. **Curate page.** Reorder, cover, featured, focal points, landing preview, save. Verified by reordering a series through the running server and checking the rebuilt page.
 4. **Deploy.** GitHub Actions workflow, `CNAME`, README deploy steps, DNS instructions for a domain registered at Squarespace, Lighthouse run on a series page.
 
 ## README

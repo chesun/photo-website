@@ -58,17 +58,28 @@ def serve(rebuild, dist, watch, port=8000, extra_routes=None, restart_on=()):
     handler = type("Handler", (QuietHandler,), {})
     handler.extra_routes = extra_routes or {}
 
+    def find_route(self):
+        """Exact path match first; otherwise the longest registered prefix
+        that ends in '/' (so '/_curate/img/' serves everything below it)."""
+        path = self.path.split("?")[0]
+        if path in self.extra_routes:
+            return self.extra_routes[path]
+        prefixes = [k for k in self.extra_routes if k.endswith("/") and path.startswith(k) and k != path]
+        return self.extra_routes[max(prefixes, key=len)] if prefixes else None
+
     def do_GET(self):
-        route = self.extra_routes.get(self.path.split("?")[0])
+        route = self.find_route()
         if route:
             return route(self)
         return QuietHandler.do_GET(self)
 
     def do_POST(self):
-        route = self.extra_routes.get(self.path.split("?")[0])
+        route = self.find_route()
         if route:
             return route(self)
         self.send_error(404)
+
+    handler.find_route = find_route
 
     handler.do_GET = do_GET
     handler.do_POST = do_POST

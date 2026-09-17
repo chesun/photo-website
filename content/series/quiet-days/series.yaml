@@ -16,7 +16,5 @@ images:
 - 000019160007.jpg
 - 000019160002.jpg
 - 000019160013.jpg
-captions:
-  untitled-shoot-057.jpg: untitled shoot-057.jpg
-  untitled-shoot-230.jpg: untitled shoot-230.jpg
-  untitled-shoot-058.jpg: untitled shoot-058.jpg
+captions: {}
+focal: {}

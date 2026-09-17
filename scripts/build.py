@@ -154,9 +154,10 @@ def main():
         traceback.print_exc()
 
     if args.serve:
-        from photosite import serve
+        from photosite import curate, serve
         serve.serve(rebuild=build, dist=DIST, watch=[CONTENT, TEMPLATES, STATIC], port=args.port,
-                    restart_on=[REPO / "scripts"])
+                    restart_on=[REPO / "scripts"],
+                    extra_routes=curate.routes(content_dir=CONTENT, cache_dir=CACHE))
 
 
 if __name__ == "__main__":

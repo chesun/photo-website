@@ -76,9 +76,17 @@ focal:                    # optional, filename: where to anchor a cropped frame
 
 The build stops with a clear message if a listed image is missing, a key is misspelled, or a non-image file is in a series folder.
 
-## Arranging the order
+## Arranging the order: the curate page
 
-Edit the `images` list in `series.yaml`, or use the curate page: run `--serve` and open http://127.0.0.1:8000/_curate/ (phase 3, not built yet).
+Run `--serve` and open http://127.0.0.1:8000/_curate/. It shows every series, published or not, with its photographs in order, and a strip at the top showing the landing slideshow in the order it will run.
+
+- **Drag** a photograph to reorder it within its series.
+- **Click** a photograph to make it the cover shown on the section index.
+- **★** adds or removes it from the landing slideshow.
+- **⌖** opens the focal-point tool: click where the crop should be anchored, with live previews of the wide-screen and phone crops. Clicking a slide in the landing strip opens the same tool.
+- **Save** on a series (or **Save all**) writes `images`, `cover`, `featured`, and `focal` back into that `series.yaml`. Everything else in the file, including comments, is left as it was. The site rebuilds on its own.
+
+The page is served only by the dev server; nothing of it goes into `dist/`. You can always edit the YAML by hand instead.
 
 ## The landing slideshow
 

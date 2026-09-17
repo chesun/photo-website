@@ -83,3 +83,8 @@ With the header floating over the slideshow, the top-right links disappeared aga
 **Per-image focal points.**
 Slides are cropped to the viewport, and some frames were framed awkwardly by a centre crop. `series.yaml` gains an optional `focal` map, filename to a CSS `object-position`, the same idea as Squarespace's focal point picker. It applies to the slideshow and to cover images; the curate page in phase 3 should let it be set by clicking.
 
+## 2026-09-17
+
+**Phase 3 built: the curate page.**
+A single HTML page served by the dev server with four JSON and image routes behind it. Two choices worth recording: the YAML is edited as text, block by block, rather than round-tripped through PyYAML, so comments and key order in `series.yaml` survive a save; and thumbnails are served from the image cache through the dev server rather than from `dist/`, so unpublished series can be curated before they are ever built. The first migration run had written filename-only captions for Graduations and Quiet Days (the check was fixed while that run was in progress); those were stripped.
+
