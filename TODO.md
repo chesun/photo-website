@@ -24,6 +24,10 @@ Open questions and future work for the photography site. Decisions, once made, m
 
 ## After launch
 
+- [ ] **Phone-friendly featured images.** On a phone the slideshow fills a tall screen, so a 2.7:1 panorama is scaled up hard and fetched at the largest size; the review measured the landing LCP at about 5s on simulated slow 4G. Prefer frames nearer 3:2 or square for the landing, or add a phone crop later.
+- [ ] **WebP variants.** The build could emit WebP beside the JPEGs (Pillow can) for roughly a third less weight per series page; the review estimated 500KB or more saved on a nine-image page.
+- [ ] **iOS scroll lock behind the open mobile menu.** `overflow: hidden` on the body is not honoured by iOS Safari; a fixed-body lock would be.
+
 - [ ] **Edit the 2024 to 2026 film scans in Lightroom and sequence them into new Landscape series.** Roughly 180 unedited scans: Sequoia and Kings Canyon (35mm mono), Great Basin and Zion (120 color, 35mm panoramic), Utah (120 color, 35mm panoramic), Grand Canyon (120 mono), Paria Canyon (120 mono), Lost Coast (120 color). The 6x6 sandstone work across Zion, Bryce, Utah, and Paria looks like one series. Grand Canyon and Paria in monochrome either join Sand and Stone or become its sequel. Lost Coast is its own thing and has people in it.
 - [ ] **Replace CDN copies with Lightroom re-exports** where a better master exists. Same filename, new hash, nothing else changes.
 - [ ] **Add the film pieces that are not on either site yet** from trips already shot: Zion, Bryce, Great Basin, Paria Canyon, and others.

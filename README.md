@@ -46,7 +46,7 @@ A *series* is a titled, sequenced body of work. It belongs to one of four sectio
 
 ## Adding a series
 
-1. Export the photographs from Lightroom: JPEG, sRGB, long edge about 2500px, quality about 80.
+1. Export the photographs from Lightroom: JPEG, sRGB, long edge about 2500px, quality about 80. Filenames should be plain: letters, digits, dashes, dots.
 2. Make a folder `content/series/<slug>/` and put the JPEGs in it.
 3. Add a `series.yaml` next to them. Copy one from another series and edit it. The keys:
 
@@ -83,7 +83,7 @@ Run `--serve` and open http://127.0.0.1:8000/_curate/. It is the place to arrang
 - **Landing slideshow strip** at the top, in the order the show will run. Click a slide to set its focal point.
 - **Drag** a photograph to reorder it, or focus it and use the arrow keys.
 - **◧** makes it the cover shown on the section index. **★** adds or removes it from the landing slideshow. **⌖** opens the focal-point tool: drag the ring to where the crop should be anchored while the outline shows exactly what the desktop or phone slideshow will keep; arrow keys nudge.
-- **⋯** moves the photograph to another series (its caption and focal point travel with it) or removes it. Removed files are not deleted; they go to `content/_removed/<series>/`.
+- **⋯** moves the photograph to another series (its caption and focal point travel with it) or removes it. Removed files are not deleted; they go to `content/_removed/<series>/`. The last photograph of a published series cannot be removed; set `published: false` first.
 - **Add photos** on a series uploads JPEGs into its folder and appends them to the order. Filenames are kept, with spaces turned into dashes; a name already in use gets a `-2` suffix. Anything that is not a JPEG is refused.
 - **Holding** at the bottom lists the files in `content/_removed/` and `content/_unplaced/`. Place one into any series, or delete it for good (choose Delete twice).
 - **New series** in the top bar creates `content/series/<slug>/series.yaml` for an empty, unpublished series. Add photographs, arrange them, then set `published: true` in the YAML when it is ready.

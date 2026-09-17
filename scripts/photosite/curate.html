@@ -49,24 +49,25 @@
 
   /* photographs */
   .strip { display: flex; flex-wrap: wrap; gap: 10px; }
-  .photo { position: relative; height: 136px; border-radius: 3px; overflow: hidden; background: var(--soft); cursor: grab; flex: 0 0 auto; outline: 0; }
+  .photo { position: relative; height: 136px; min-width: 72px; border-radius: 3px; overflow: hidden; background: var(--soft); cursor: grab; flex: 0 0 auto; outline: 0; display: flex; justify-content: center; }
   .photo img { height: 100%; width: auto; display: block; pointer-events: none; }
   .photo.dragging { opacity: .3; }
   .photo.menu-open { overflow: visible; z-index: 4; }
-  .photo::before { content: ""; position: absolute; top: 0; bottom: 0; width: 3px; background: var(--ink); opacity: 0; }
-  .photo.drop-before::before { left: -6px; opacity: 1; }
-  .photo.drop-after::before { right: -6px; opacity: 1; }
-  .badge { position: absolute; left: 6px; top: 6px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; background: rgba(251,251,249,.94); color: var(--ink); padding: 3px 7px; border-radius: 3px; }
+  .photo::before { content: ""; position: absolute; top: 0; bottom: 0; width: 3px; background: var(--ink); opacity: 0; z-index: 1; }
+  .photo.drop-before::before { left: 0; opacity: 1; }
+  .photo.drop-after::before { right: 0; opacity: 1; }
+  .badge { position: absolute; left: 6px; top: 6px; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; background: rgba(251,251,249,.94); color: var(--ink); padding: 3px 7px; border-radius: 3px; }
   .badge.star { left: auto; right: 6px; background: var(--ink); color: #fff; }
-  .tools { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; gap: 4px; padding: 6px; background: linear-gradient(transparent, rgba(0,0,0,.55)); opacity: 0; transition: opacity 120ms; }
+  .tools { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; padding: 5px 4px; background: linear-gradient(transparent, rgba(0,0,0,.55)); opacity: 0; transition: opacity 120ms; }
   .photo:hover .tools, .photo:focus-within .tools, .photo.menu-open .tools { opacity: 1; }
-  .tools button { padding: 4px 8px; font-size: 12px; line-height: 1; border-radius: 3px; background: rgba(255,255,255,.94); color: var(--ink); border: 0; }
+  .tools button { padding: 4px 6px; font-size: 12px; line-height: 1; border-radius: 3px; background: rgba(255,255,255,.94); color: var(--ink); border: 0; }
   .tools button.on { background: var(--ink); color: #fff; }
-  .tools button:hover { background: #fff; }
+  .tools button:not(.on):hover { background: #fff; }
   .menu { position: absolute; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid var(--rule); border-radius: var(--r); box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 6px; display: none; z-index: 3; min-width: 170px; }
   .menu.open { display: block; }
   .menu button, .menu select { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--ink); padding: 7px 10px; border-radius: 3px; font-size: 13px; }
   .menu button:hover { background: var(--soft); }
+  .menu [hidden] { display: none; }
   .menu .danger { color: var(--warn); }
   .menu .confirm { padding: 6px 10px; font-size: 12px; color: var(--mute); }
   .menu .confirm button { display: inline-block; width: auto; padding: 4px 8px; border: 1px solid var(--rule); margin-right: 6px; }
@@ -90,8 +91,8 @@
   .overlay { position: fixed; inset: 0; z-index: 20; background: rgba(14,14,14,.96); color: #fff; display: none; align-items: center; justify-content: center; padding: 28px; overflow: auto; }
   .overlay.open { display: flex; }
   .overlay .label { color: #9a9a95; }
-  .focal { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: center; width: 100%; max-width: 1500px; }
-  @media (max-width: 960px) { .focal { grid-template-columns: minmax(0, 1fr); } .side { max-width: 520px; } }
+  .focal-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: center; width: 100%; max-width: 1500px; margin: auto; }
+  @media (max-width: 960px) { .focal-layout { grid-template-columns: minmax(0, 1fr); } .side { max-width: 520px; } }
   .stage { position: relative; justify-self: center; max-width: 100%; user-select: none; touch-action: none; overflow: hidden; border-radius: 2px; }
   .stage img { display: block; max-width: 100%; max-height: calc(100vh - 80px); width: auto; height: auto; }
   .stage .crop { position: absolute; border: 1px solid rgba(255,255,255,.85); box-shadow: 0 0 0 9999px rgba(0,0,0,.28); pointer-events: none; display: none; }
@@ -133,7 +134,7 @@
 
 <!-- Focal point tool -->
 <div class="overlay" id="focal-overlay">
-  <div class="focal">
+  <div class="focal-layout">
     <div class="stage" id="stage">
       <img id="stage-img" alt="">
       <div class="crop on" id="crop-wide"><span>Desktop</span></div>
@@ -188,8 +189,14 @@ async function api(path, body) {
   return out;
 }
 async function load() {
-  const data = await (await fetch('/_curate/data')).json();
-  Object.assign(state, data); state.dirty.clear();
+  let data;
+  try { data = await (await fetch('/_curate/data')).json(); }
+  catch (err) { $('#main').innerHTML = '<p class="empty">Could not reach the dev server. Is it running?</p>'; toast('Could not load: ' + err.message, true, 6000); return; }
+  // Series with unsaved changes keep their in-page state across a reload of the data.
+  const keep = new Map(state.series.filter((s) => state.dirty.has(s.slug)).map((s) => [s.slug, s]));
+  Object.assign(state, data);
+  state.series = state.series.map((s) => keep.get(s.slug) || s);
+  state.dirty = new Set([...state.dirty].filter((slug) => state.series.some((s) => s.slug === slug)));
   render();
 }
 function markDirty(s) { state.dirty.add(s.slug); render(); }
@@ -199,6 +206,8 @@ function bySlug(slug) { return state.series.find((s) => s.slug === slug); }
 // Rendering
 // ============================================================================
 function render() {
+  const active = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.photo') : null;
+  const refocus = active && active.dataset.file ? { slug: active.closest('.card').dataset.slug, file: active.dataset.file } : null;
   const main = $('#main'); main.innerHTML = '';
   main.appendChild(el('div', 'legend',
     '<span><b>Drag</b> to reorder</span><span><b>◧</b> cover on the section index</span><span><b>★</b> in the landing slideshow</span><span><b>⌖</b> focal point for crops</span><span><b>⋯</b> move or remove</span>'));
@@ -213,7 +222,9 @@ function render() {
     for (const f of s.featured) {
       n++;
       const d = el('div', 'slide', `<div class="frame"><img src="${imgUrl(s.slug, 'medium', f)}" style="object-position:${s.focal[f] || '50% 50%'}" alt=""><span class="n">${n}</span></div><div class="who">${escapeHtml(s.title)}</div>`);
+      d.tabIndex = 0; d.setAttribute('role', 'button');
       d.onclick = () => openFocal(s, f);
+      d.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFocal(s, f); } };
       landing.appendChild(d);
     }
   }
@@ -224,7 +235,7 @@ function render() {
   for (const section of state.sections) {
     const list = state.series.filter((s) => s.section === section || (s.error && section === state.sections[0]));
     if (!list.length) continue;
-    main.appendChild(el('h2', 'section', escapeHtml(section)));
+    main.appendChild(el('h2', 'section', escapeHtml(section.charAt(0).toUpperCase() + section.slice(1))));
     for (const s of list) main.appendChild(renderSeries(s));
   }
 
@@ -241,10 +252,17 @@ function render() {
   $('#status').textContent = dirty ? `${dirty} series with unsaved changes` : 'Everything saved';
   $('#status').className = 'status' + (dirty ? ' dirty' : '');
   $('#save-all').disabled = !dirty;
+  if (refocus) focusPhoto(refocus.slug, refocus.file);
+}
+function focusPhoto(slug, file) {
+  const card = $(`.card[data-slug="${CSS.escape(slug)}"]`);
+  const q = card && card.querySelector(`.photo[data-file="${CSS.escape(file)}"]`);
+  if (q) q.focus();
 }
 
 function renderSeries(s) {
   const card = el('section', 'card' + (state.dirty.has(s.slug) ? ' dirty' : '') + (s.error ? ' error' : ''));
+  card.dataset.slug = s.slug;
   if (s.error) { card.innerHTML = `<div class="card-head"><span class="title">${escapeHtml(s.slug)}</span></div><div>${escapeHtml(s.error)}</div>`; return card; }
   const dirty = state.dirty.has(s.slug);
   card.innerHTML = `<div class="card-head">
@@ -268,7 +286,7 @@ function renderSeries(s) {
 
 function renderPhoto(s, f, i, strip) {
   const featured = s.featured.includes(f);
-  const p = el('div', 'photo'); p.draggable = true; p.tabIndex = 0; p.title = s.captions[f] ? `${f} — ${s.captions[f]}` : f;
+  const p = el('div', 'photo'); p.draggable = true; p.tabIndex = 0; p.dataset.file = f; p.title = s.captions[f] ? `${f} — ${s.captions[f]}` : f;
   p.innerHTML = `<img src="${imgUrl(s.slug, 'thumb', f)}" alt="">`
     + (s.cover === f ? '<span class="badge">Cover</span>' : '')
     + (featured ? '<span class="badge star">★</span>' : '')
@@ -284,7 +302,7 @@ function renderPhoto(s, f, i, strip) {
          <button class="danger remove">Remove from series</button>
          <div class="confirm" hidden>Moves the file to content/_removed. <button class="yes">Remove</button><button class="no">Keep</button></div>
        </div>`;
-  $('.cover', p).onclick = () => { s.cover = f; markDirty(s); };
+  $('.cover', p).onclick = () => { if (s.cover === f) return; s.cover = f; markDirty(s); };
   $('.star', p).onclick = () => { const k = s.featured.indexOf(f); if (k >= 0) s.featured.splice(k, 1); else s.featured.push(f); markDirty(s); };
   $('.focal', p).onclick = () => openFocal(s, f);
   const menu = $('.menu', p);
@@ -296,13 +314,13 @@ function renderPhoto(s, f, i, strip) {
 
   // Keyboard: arrows move the photograph within the series
   p.onkeydown = (e) => {
+    if (focal || e.target.closest('.menu')) return;
+    if (e.key === 'Escape') { closeMenus(); return; }
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     const j = i + (e.key === 'ArrowLeft' ? -1 : 1);
     if (j < 0 || j >= s.images.length) return;
     [s.images[i], s.images[j]] = [s.images[j], s.images[i]];
-    markDirty(s);
-    const moved = $('#main').querySelectorAll('.photo');   // refocus the moved photo
-    for (const q of moved) if (q.title.startsWith(f)) { q.focus(); break; }
+    markDirty(s);                       // render() restores focus to this photo
     e.preventDefault();
   };
   // Drag and drop with a before/after indicator
@@ -329,6 +347,7 @@ function renderPhoto(s, f, i, strip) {
 function clearDrops(strip) { strip.querySelectorAll('.photo').forEach((q) => q.classList.remove('drop-before', 'drop-after')); }
 function closeMenus() { document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open')); document.querySelectorAll('.photo.menu-open').forEach((q) => q.classList.remove('menu-open')); }
 document.addEventListener('click', (e) => { if (!e.target.closest('.menu') && !e.target.closest('.more')) closeMenus(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !focal) closeMenus(); });
 
 function renderHeld(item) {
   const p = el('div', 'photo'); p.title = `${item.group}/${item.file}`;
@@ -336,6 +355,7 @@ function renderHeld(item) {
     <div class="tools"><button class="place">Place in…</button><select class="move-to"><option value="">Place in…</option>${state.series.filter((o) => !o.error).map((o) => `<option value="${o.slug}">${escapeHtml(o.title)}</option>`).join('')}<option value="__delete">Delete permanently</option></select></div>`;
   $('.move-to', p).onchange = async (e) => {
     const v = e.target.value; if (!v) return;
+    if (v !== '__delete' && state.dirty.has(v)) { toast('Save that series first', true, 4000); e.target.value = ''; return; }
     try {
       if (v === '__delete') { if (!p.dataset.armed) { p.dataset.armed = '1'; toast('Choose "Delete permanently" again to confirm', true, 4000); e.target.value = ''; return; } await api('/_curate/delete', { holding: item.group, file: item.file }); toast(`Deleted ${item.file}`); }
       else { const out = await api('/_curate/move', { from: item.group, file: item.file, to: v }); toast(`Placed ${out.moved} in ${bySlug(v).title}`); }
@@ -360,21 +380,22 @@ window.addEventListener('beforeunload', (e) => { if (state.dirty.size) { e.preve
 async function uploadFiles(s, files) {
   if (!files.length) return;
   if (state.dirty.has(s.slug)) { toast('Save this series first, then add photos', true, 4000); return; }
-  let added = 0;
-  for (const file of files) {
-    toast(`Uploading ${file.name} (${added + 1} of ${files.length})…`, false, 60000);
-    const r = await fetch(`/_curate/upload?slug=${enc(s.slug)}`, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'X-Filename': enc(file.name) }, body: file });
-    const out = await r.json();
-    if (!r.ok) { toast(`${file.name}: ${out.error}`, true, 6000); continue; }
-    added++;
+  let added = 0, failed = 0;
+  for (const [k, file] of files.entries()) {
+    toast(`Uploading ${file.name} (${k + 1} of ${files.length})…`, false, 60000);
+    try {
+      const r = await fetch(`/_curate/upload?slug=${enc(s.slug)}`, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'X-Filename': enc(file.name) }, body: file });
+      const out = await r.json();
+      if (!r.ok) throw new Error(out.error);
+      added++;
+    } catch (err) { failed++; toast(`${file.name}: ${err.message}`, true, 6000); await new Promise((r) => setTimeout(r, 1500)); }
   }
   await load();
-  toast(`Added ${added} photograph${added === 1 ? '' : 's'} to ${s.title}`);
+  if (added) toast(`Added ${added} photograph${added === 1 ? '' : 's'} to ${s.title}${failed ? `, ${failed} failed` : ''}`);
 }
 
 async function moveFile(fromSlug, file, to) {
-  const s = bySlug(fromSlug);
-  if (state.dirty.has(fromSlug)) { toast('Save this series first', true, 4000); return; }
+  if (state.dirty.has(fromSlug) || state.dirty.has(to)) { toast('Save the series involved first', true, 4000); return; }
   try {
     const out = await api('/_curate/move', { from: fromSlug, file, to });
     toast(to === '_removed' ? `Removed ${file} (kept in content/_removed)` : `Moved ${out.moved} to ${bySlug(to).title}`);
@@ -411,7 +432,9 @@ function openFocal(s, f) {
   const [x, y] = (s.focal[f] || '50% 50%').split(' ').map(parseFloat);
   focal = { s, f, x, y, original: s.focal[f] || null };
   stageImg.onload = layoutFocal;
+  stageImg.removeAttribute('src');          // never show the previous photo under the new title
   stageImg.src = imgUrl(s.slug, 'medium', f);
+  stage.tabIndex = -1; stage.focus();      // so arrow keys reach the tool, not the thumbnail
   $('#focal-title').textContent = s.title; $('#focal-file').textContent = f;
   $('#focal-overlay').classList.add('open');
   if (stageImg.complete) layoutFocal();
@@ -440,6 +463,8 @@ let dragging = false;
 stage.addEventListener('pointerdown', (e) => { if (!focal) return; dragging = true; stage.setPointerCapture(e.pointerId); setFocalFromEvent(e); });
 stage.addEventListener('pointermove', (e) => { if (dragging) setFocalFromEvent(e); });
 stage.addEventListener('pointerup', () => (dragging = false));
+stage.addEventListener('pointercancel', () => (dragging = false));
+stage.addEventListener('lostpointercapture', () => (dragging = false));
 window.addEventListener('resize', layoutFocal);
 $('#show-wide').onclick = () => { $('#crop-wide').classList.add('on'); $('#crop-tall').classList.remove('on'); $('#show-wide').classList.add('on'); $('#show-tall').classList.remove('on'); };
 $('#show-tall').onclick = () => { $('#crop-tall').classList.add('on'); $('#crop-wide').classList.remove('on'); $('#show-tall').classList.add('on'); $('#show-wide').classList.remove('on'); };
@@ -456,7 +481,7 @@ document.addEventListener('keydown', (e) => {
   if (!focal) { if (e.key === 'Escape') $('#series-overlay').classList.remove('open'); return; }
   const step = e.shiftKey ? 5 : 1;
   if (e.key === 'Escape') closeFocal();
-  else if (e.key === 'Enter') $('#focal-done').onclick();
+  else if (e.key === 'Enter') { if (e.target.tagName === 'BUTTON') return; $('#focal-done').onclick(); }
   else if (e.key === 'ArrowLeft') { focal.x = Math.max(0, focal.x - step); layoutFocal(); }
   else if (e.key === 'ArrowRight') { focal.x = Math.min(100, focal.x + step); layoutFocal(); }
   else if (e.key === 'ArrowUp') { focal.y = Math.max(0, focal.y - step); layoutFocal(); }

@@ -16,16 +16,21 @@ source image.
 import hashlib
 import io
 import json
-import shutil
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
 from PIL import Image, ImageCms, ImageOps, ImageStat
 
-# Variant name -> long-edge size in pixels. `medium` is what most visitors
-# download on a desktop in column layout, so it is the one to keep an eye on.
-VARIANTS = {"thumb": 480, "medium": 1600, "large": 2400}
-JPEG_QUALITY = 82
+# Variant name -> long-edge size in pixels. Phones at 3x pick `small`,
+# 1x desktops `medium`, retina desktops `large`; the largest file is saved
+# at a slightly lower quality because it is also the heaviest.
+VARIANTS = {"thumb": 480, "small": 1000, "medium": 1600, "large": 2400}
+JPEG_QUALITY = {"thumb": 82, "small": 82, "medium": 82, "large": 78}
+
+# Anything that changes the output is part of the cache key, so editing the
+# settings above reprocesses every image on the next build.
+SETTINGS_KEY = hashlib.sha256(json.dumps([VARIANTS, JPEG_QUALITY], sort_keys=True).encode()).hexdigest()[:8]
 
 # Pillow's default limit guards against decompression bombs. Scans of medium
 # format film can exceed it, so raise it to something still sane.
@@ -83,10 +88,10 @@ def process(source, cache_dir):
     """Return ImageInfo for a source file, computing and caching it if needed."""
     source = Path(source)
     digest = file_hash(source)
-    folder = Path(cache_dir) / digest
+    folder = Path(cache_dir) / f"{digest}-{SETTINGS_KEY}"
     meta_path = folder / "meta.json"
 
-    if meta_path.exists():
+    if meta_path.exists() and all((folder / f"{name}.jpg").exists() for name in VARIANTS):
         meta = json.loads(meta_path.read_text())
         variants = {name: {**v, "path": folder / f"{name}.jpg"} for name, v in meta["variants"].items()}
         return ImageInfo(digest, meta["width"], meta["height"], meta["average_color"], variants)
@@ -104,8 +109,11 @@ def process(source, cache_dir):
             out = folder / f"{name}.jpg"
             # Saving a fresh RGB image writes no EXIF and no ICC profile: that
             # is the metadata strip. progressive=True makes the browser show a
-            # blurry version early; optimize=True shaves a few percent.
-            copy.save(out, "JPEG", quality=JPEG_QUALITY, progressive=True, optimize=True)
+            # blurry version early; optimize=True shaves a few percent. Write
+            # to a temporary name and rename, so a reader never sees a half file.
+            tmp = folder / f"{name}.tmp"
+            copy.save(tmp, "JPEG", quality=JPEG_QUALITY[name], progressive=True, optimize=True)
+            os.replace(tmp, out)
             variants[name] = {"width": copy.width, "height": copy.height, "path": out}
 
     meta = {
@@ -117,16 +125,24 @@ def process(source, cache_dir):
 
 
 def publish(info, dest_dir, stem):
-    """Copy an image's cached variants into the output folder.
+    """Link an image's cached variants into the output folder.
 
-    Files are named <stem>-<variant>.jpg. Returns {variant name: filename}.
+    Files are named <stem>-<hash>-<variant>.jpg: the hash keeps two sources
+    with the same stem apart and gives browsers a new URL when a photograph
+    is re-exported. Hard links cost nothing, so dist/ can be rebuilt from
+    scratch on every build; a copy is the fallback across filesystems.
+    Returns {variant name: filename}.
     """
     dest_dir = Path(dest_dir)
     dest_dir.mkdir(parents=True, exist_ok=True)
     names = {}
     for name, variant in info.variants.items():
-        target = dest_dir / f"{stem}-{name}.jpg"
-        if not target.exists() or target.stat().st_size != variant["path"].stat().st_size:
-            shutil.copyfile(variant["path"], target)
+        target = dest_dir / f"{stem}-{info.hash[:8]}-{name}.jpg"
+        if not target.exists():
+            try:
+                os.link(variant["path"], target)
+            except OSError:
+                import shutil
+                shutil.copyfile(variant["path"], target)
         names[name] = target.name
     return names

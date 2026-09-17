@@ -13,15 +13,16 @@
    from each cover's aspect ratio (see render.cover_rows). #}
 <div class="covers{% if section == 'archive' %} covers-small{% endif %}">
   {% for row in rows %}
-  <ul class="cover-row">
+  <ul class="cover-row{% if row|length == 1 %} cover-row-single{% endif %}">
     {% for c in row %}
-    <li class="cover reveal" style="--w:{{ c.width_pct }}%;--ratio:{{ c.ratio }};--tone:{{ c.color }}">
+    <li class="cover{% if not (row == rows[0]) %} reveal{% endif %}" style="--w:{{ c.width_pct }}%;--ratio:{{ c.ratio }};--tone:{{ c.color }}">
       <a href="{{ c.url }}">
         <span class="cover-image">
           <img src="{{ c.src }}" srcset="{{ c.srcset }}"
-               sizes="(min-width: 900px) {{ c.width_pct }}vw, calc(100vw - 32px)"
+               sizes="(min-width: 801px) {{ c.width_pct }}vw, calc(100vw - 32px)"
                width="{{ c.width }}" height="{{ c.height }}" alt="" style="object-position:{{ c.focus }}"
-               loading="{{ 'eager' if loop.index0 == 0 and row == rows[0] else 'lazy' }}" decoding="async">
+               loading="{{ 'eager' if loop.index0 == 0 and row == rows[0] else 'lazy' }}" decoding="async"
+               onload="this.classList.add('is-loaded')">
         </span>
         <span class="cover-title">{{ c.title }}</span>
         <span class="tone-tag">{{ c.tone }}</span>

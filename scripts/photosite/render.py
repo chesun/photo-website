@@ -59,7 +59,7 @@ class Renderer:
         variants = info.variants
         img_url = f"/img/{series.slug}/"
         srcset = ", ".join(f"{img_url}{published[name]} {variants[name]['width']}w"
-                           for name in ("thumb", "medium", "large"))
+                           for name in ("thumb", "small", "medium", "large"))
         # The frame is as wide as the content column, unless that would make
         # it taller than FRAME_MAX_VH of the viewport. Mirrors the CSS rule.
         sizes = (f"min(calc(100vw - {2 * GUTTER_PX}px), {CONTENT_WIDTH_PX}px, "
@@ -78,8 +78,11 @@ class Renderer:
             "color": info.average_color,
             "caption": series.captions.get(filename, ""),
             "alt": series.captions.get(filename) or f"{series.title}, photograph {position}",
-            # The first frames are visible on load: fetch them eagerly.
+            # The first frame is the largest thing on screen at load: fetch it
+            # first. The second is usually just below the fold: eager, but not
+            # ahead of everything else.
             "eager": position <= 2,
+            "priority": position == 1,
         }
 
     def slide(self, series, filename, info, published):
@@ -88,7 +91,10 @@ class Renderer:
         img_url = f"/img/{series.slug}/"
         return {
             "src": img_url + published["large"],
-            "srcset": ", ".join(f"{img_url}{published[n]} {variants[n]['width']}w" for n in ("medium", "large")),
+            "srcset": ", ".join(f"{img_url}{published[n]} {variants[n]['width']}w" for n in ("small", "medium", "large")),
+            # The slide covers the viewport: on a tall phone a wide frame is
+            # scaled up to fill the height, so ask for the width that implies.
+            "sizes": f"max(100vw, calc(100vh * {info.aspect_ratio:.4f}))",
             "width": info.width,
             "height": info.height,
             "color": info.average_color,
@@ -105,7 +111,7 @@ class Renderer:
             "tone": series.tone,
             "src": f"/img/{series.slug}/{published['medium']}",
             "srcset": ", ".join(f"/img/{series.slug}/{published[n]} {info.variants[n]['width']}w"
-                                for n in ("thumb", "medium")),
+                                for n in ("thumb", "small", "medium")),
             "width": info.width,
             "height": info.height,
             "ratio": f"{info.aspect_ratio:.4f}",
@@ -138,13 +144,24 @@ def justified_rows(items, target_height=0.36, gap=0.02):
             height = (1 - gap * (len(current) - 1)) / sum(ratios)
         return height, [{**c, "width_pct": f"{height * r * 100:.3f}"} for c, r in zip(current, ratios)]
 
+    def height_of(current):
+        return (1 - gap * (len(current) - 1)) / sum(float(c["ratio"]) for c in current)
+
     for item in items:
         row.append(item)
         width_at_target = sum(float(c["ratio"]) for c in row) * target_height + gap * (len(row) - 1)
-        if width_at_target >= 1:
-            previous_height, solved_row = solved(row)
+        if width_at_target < 1:
+            continue
+        # The row is full. If it is now much shorter than the target and the
+        # row without this item would have been closer to it, break there.
+        if len(row) > 1 and abs(height_of(row[:-1]) - target_height) < abs(height_of(row) - target_height):
+            previous_height, solved_row = solved(row[:-1])
             rows.append(solved_row)
-            row = []
+            row = [item]
+            continue
+        previous_height, solved_row = solved(row)
+        rows.append(solved_row)
+        row = []
     if row:
         rows.append(solved(row, height=min(target_height, previous_height))[1])
     return rows

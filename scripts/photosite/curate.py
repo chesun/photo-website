@@ -28,11 +28,13 @@ explicit delete route, which only touches the holding folders.
 
 import io
 import json
+import os
 import re
 import shutil
 import urllib.parse
 from pathlib import Path
 
+import yaml
 from PIL import Image, UnidentifiedImageError
 
 from . import content as content_lib
@@ -106,11 +108,14 @@ def series_data(content_dir):
 # --------------------------------------------------------------------------
 
 def yaml_scalar(value):
-    """Quote a string for YAML unless it is plainly safe."""
+    """Quote a string for YAML unless YAML reads it back unchanged as text
+    (so 'On', '1.10', '2024-01-05' and the like are quoted)."""
     text = str(value)
-    if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9 ._\-]*", text) and not text.lower() in ("true", "false", "null", "yes", "no"):
-        return text
-    return "'" + text.replace("'", "''") + "'"
+    try:
+        plain = bool(text) and text == text.strip() and "\n" not in text and yaml.safe_load(text) == text
+    except yaml.YAMLError:
+        plain = False
+    return text if plain else "'" + text.replace("'", "''") + "'"
 
 
 def yaml_block(key, value):
@@ -128,23 +133,38 @@ def yaml_block(key, value):
 def replace_block(text, key, block):
     """Replace the top-level `key:` block in YAML text, or append it.
 
-    A block runs from `key:` to the next top-level key (a line starting with
-    a letter) or a comment line or the end. List items start with '-' and
-    mapping entries are indented, so neither ends a block."""
-    pattern = re.compile(rf"^{re.escape(key)}:.*?(?=^[A-Za-z_#]|\Z)", re.S | re.M)
+    A block runs from `key:` up to the next top-level key (a line starting
+    with a letter), not counting comment lines directly above that key, or
+    to the end. List items start with '-' and mapping entries are indented,
+    so a comment inside a list stays inside the block and is replaced with it."""
+    pattern = re.compile(rf"^{re.escape(key)}:.*?(?=(?:^#[^\n]*\n?)*(?:^[A-Za-z_]|\Z))", re.S | re.M)
     if pattern.search(text):
         return pattern.sub(lambda _: block, text, count=1)
     return text.rstrip("\n") + "\n" + block
 
 
-def write_lists(folder, **blocks):
-    """Rewrite the given top-level keys of a series' YAML and re-validate."""
+def write_text_atomic(path, text):
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def write_lists(folder, leaving=(), **blocks):
+    """Rewrite the given top-level keys of a series' YAML, then validate it
+    strictly; if the result would not load, put the old text back and raise,
+    so a refused write leaves nothing behind. `leaving` names a file that is
+    still in the folder but about to be moved out."""
     path = folder / "series.yaml"
-    text = path.read_text(encoding="utf-8")
+    old = path.read_text(encoding="utf-8")
+    text = old
     for key, value in blocks.items():
         text = replace_block(text, key, yaml_block(key, value))
-    path.write_text(text, encoding="utf-8")
-    return content_lib.load_series(folder, include_unpublished=True)
+    write_text_atomic(path, text)
+    try:
+        return content_lib.load_series(folder, include_unpublished=True, strict=True, leaving=leaving)
+    except content_lib.ContentError:
+        write_text_atomic(path, old)
+        raise
 
 
 def read_lists(folder):
@@ -162,8 +182,9 @@ def save_series(content_dir, payload):
     """Write images, cover, featured and focal from the page."""
     slug = payload["slug"]
     folder = series_folder(content_dir, slug)
-    on_disk = {p.name for p in folder.iterdir() if p.suffix.lower() in content_lib.IMAGE_SUFFIXES}
-    imgs = list(payload["images"])
+    on_disk = {p.name for p in folder.iterdir()
+               if p.is_file() and not p.name.startswith(".") and p.suffix.lower() in content_lib.IMAGE_SUFFIXES}
+    imgs = [str(f) for f in payload["images"]]
     if set(imgs) != on_disk or len(imgs) != len(on_disk):
         raise CurateError(f"{slug}: the image list no longer matches the folder; reload the page")
     cover = payload.get("cover") or (imgs[0] if imgs else "")
@@ -172,7 +193,7 @@ def save_series(content_dir, payload):
     featured = [f for f in payload.get("featured", []) if f in imgs]
     focal = {k: str(v).strip() for k, v in payload.get("focal", {}).items() if k in imgs and str(v).strip()}
     for value in focal.values():
-        if not re.fullmatch(r"\d{1,3}% \d{1,3}%", value):
+        if not re.fullmatch(r"\S+ \S+", value):
             raise CurateError(f"{slug}: focal point {value!r} should look like '50% 30%'")
     write_lists(folder, cover=cover, featured=featured, images=imgs, focal=focal)
     return {"saved": slug}
@@ -184,6 +205,15 @@ def safe_filename(name):
     name = re.sub(r"[^A-Za-z0-9._-]", "", name)
     if not name or name.startswith("."):
         raise CurateError(f"cannot use filename {name!r}")
+    return name
+
+
+def check_filename(name):
+    """A name the page read from /_curate/data: one plain path segment,
+    accepted as it is on disk (spaces, quotes and all)."""
+    name = str(name)
+    if not name or name != Path(name).name or name.startswith(".") or "\\" in name or "/" in name:
+        raise CurateError(f"bad filename {name!r}")
     return name
 
 
@@ -207,8 +237,11 @@ def upload(content_dir, slug, filename, data):
         with Image.open(io.BytesIO(data)) as im:
             if im.format != "JPEG":
                 raise CurateError(f"{name}: not a JPEG (it is {im.format})")
+            im.load()                       # a truncated file fails here, not in the build
     except UnidentifiedImageError:
         raise CurateError(f"{name}: not an image") from None
+    except OSError as error:
+        raise CurateError(f"{name}: unreadable JPEG ({error})") from None
     name = unique_name(folder, name)
     (folder / name).write_bytes(data)
     # The loader already appends any file it finds unlisted, so just make
@@ -225,12 +258,12 @@ def detach(folder, name):
     lists = read_lists(folder)
     if name not in lists["images"]:
         raise CurateError(f"{name} is not in {folder.name}")
-    lists["images"].remove(name)
+    lists["images"] = [f for f in lists["images"] if f != name]
     featured = [f for f in lists["featured"] if f != name]
     caption = lists["captions"].pop(name, None)
     focal = lists["focal"].pop(name, None)
     cover = lists["cover"] if lists["cover"] != name else (lists["images"][0] if lists["images"] else "")
-    write_lists(folder, images=lists["images"], cover=cover, featured=featured,
+    write_lists(folder, leaving=(name,), images=lists["images"], cover=cover, featured=featured,
                 captions=lists["captions"], focal=lists["focal"])
     return caption, focal
 
@@ -252,7 +285,7 @@ def move(content_dir, source, name, target):
     """Move a photograph from a series or holding folder to a series or to
     `_removed`. Captions and focal points travel with it between series."""
     content_dir = Path(content_dir)
-    name = safe_filename(name)
+    name = check_filename(name)
     caption = focal = None
     if source.startswith(HOLDING):
         src_folder = holding_path(content_dir, source)
@@ -287,7 +320,7 @@ def move(content_dir, source, name, target):
 def delete_held(content_dir, group, name):
     """Permanently delete a file from a holding folder. Only there."""
     folder = holding_path(content_dir, group)
-    path = folder / safe_filename(name)
+    path = folder / check_filename(name)
     if not path.is_file():
         raise CurateError(f"{group}/{name} does not exist")
     path.unlink()
@@ -306,10 +339,11 @@ def slugify(title):
 def create_series(content_dir, payload):
     """Make content/series/<slug>/series.yaml for a new, empty, unpublished series."""
     content_dir = Path(content_dir)
-    title = str(payload.get("title", "")).strip()
-    section, tone = payload.get("section"), payload.get("tone")
-    if not title:
+    title = payload.get("title", "")
+    if not isinstance(title, str) or not title.strip():
         raise CurateError("a title is needed")
+    title = title.strip()
+    section, tone = payload.get("section"), payload.get("tone")
     if section not in content_lib.SECTIONS or tone not in content_lib.TONES:
         raise CurateError("section or tone is not one of the allowed values")
     slug = slugify(title)
@@ -320,6 +354,10 @@ def create_series(content_dir, payload):
     if order in (None, ""):
         existing = [s["order"] for s in series_data(content_dir)["series"] if s.get("section") == section]
         order = (max(existing) + 10) if existing else 10
+    try:
+        order = int(order)
+    except (TypeError, ValueError):
+        raise CurateError("order must be a whole number") from None
     folder.mkdir(parents=True)
     (folder / "series.yaml").write_text(
         HEADER + f"title: {yaml_scalar(title)}\nsection: {section}\norder: {int(order)}\ntone: {tone}\n"
@@ -349,14 +387,30 @@ def routes(content_dir, cache_dir):
     def body_of(handler):
         return handler.rfile.read(int(handler.headers.get("Content-Length", 0)))
 
+    def same_origin(handler):
+        """Only the curate page itself may change content. A JSON body forces
+        browsers to send a preflight for cross-origin requests, which this
+        server never answers; a stray Origin header is refused outright."""
+        origin = handler.headers.get("Origin")
+        host = handler.headers.get("Host", "")
+        if origin and origin != f"http://{host}":
+            return False
+        return handler.headers.get("Content-Type", "").split(";")[0].strip() in ("application/json", "application/octet-stream")
+
     def json_route(fn):
         """Wrap an operation taking the parsed JSON body; errors become 400s."""
         def handle(handler):
+            if not same_origin(handler):
+                return send(handler, 403, json.dumps({"error": "refused: not from the curate page"}), "application/json")
             try:
                 payload = json.loads(body_of(handler) or b"{}")
+                if not isinstance(payload, dict):
+                    raise CurateError("expected a JSON object")
                 result = fn(payload, handler)
-            except (CurateError, content_lib.ContentError, KeyError, ValueError, OSError) as error:
-                return send(handler, 400, json.dumps({"error": str(error)}), "application/json")
+            except (CurateError, content_lib.ContentError, KeyError, ValueError, TypeError, AttributeError, OSError) as error:
+                return send(handler, 400, json.dumps({"error": f"{type(error).__name__}: {error}"}), "application/json")
+            except Exception as error:      # never drop the connection without an answer
+                return send(handler, 500, json.dumps({"error": f"{type(error).__name__}: {error}"}), "application/json")
             send(handler, 200, json.dumps(result), "application/json")
         return handle
 
@@ -367,13 +421,17 @@ def routes(content_dir, cache_dir):
         send(handler, 200, json.dumps(series_data(content_dir)), "application/json")
 
     def upload_route(handler):
+        if not same_origin(handler):
+            return send(handler, 403, json.dumps({"error": "refused: not from the curate page"}), "application/json")
         query = urllib.parse.parse_qs(urllib.parse.urlparse(handler.path).query)
         try:
             slug = query.get("slug", [""])[0]
             filename = urllib.parse.unquote(handler.headers.get("X-Filename", ""))
             result = upload(content_dir, slug, filename, body_of(handler))
-        except (CurateError, content_lib.ContentError, OSError) as error:
+        except (CurateError, content_lib.ContentError, OSError, ValueError) as error:
             return send(handler, 400, json.dumps({"error": str(error)}), "application/json")
+        except Exception as error:
+            return send(handler, 500, json.dumps({"error": f"{type(error).__name__}: {error}"}), "application/json")
         send(handler, 200, json.dumps(result), "application/json")
 
     def image(handler):
@@ -388,11 +446,14 @@ def routes(content_dir, cache_dir):
             else:
                 _, _, _, slug, size, filename = parts
                 source = content_dir / "series" / slug / filename
-            if size not in images.VARIANTS or not source.is_file():
+            if size not in images.VARIANTS or not source.is_file() or source.suffix.lower() not in content_lib.IMAGE_SUFFIXES:
                 raise ValueError
         except (ValueError, CurateError):
             return handler.send_error(404)
-        info = images.process(source, cache_dir)        # cached after the first request
+        try:
+            info = images.process(source, cache_dir)        # cached after the first request
+        except Exception:
+            return handler.send_error(500, "could not process that image")
         send(handler, 200, info.variants[size]["path"].read_bytes(), "image/jpeg")
 
     return {

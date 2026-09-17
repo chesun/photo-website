@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% set active_section = none %}
 {% block body_class %}page page-landing{% endblock %}
+{% block font_preloads %}<link rel="preload" href="/static/fonts/newsreader-italic-300.woff2" as="font" type="font/woff2" crossorigin>{% endblock %}
 {% block head %}
   {% if slides %}
-  <link rel="preload" as="image" href="{{ slides[0].src }}" imagesrcset="{{ slides[0].srcset }}" imagesizes="100vw" fetchpriority="high">
+  <link rel="preload" as="image" href="{{ slides[0].src }}" imagesrcset="{{ slides[0].srcset }}" imagesizes="{{ slides[0].sizes }}" fetchpriority="high">
   {% endif %}
 {% endblock %}
 
@@ -16,7 +17,7 @@
     {% for s in slides %}
     <img class="hero-slide{% if loop.first %} is-active{% endif %}"
          {% if loop.first %}src="{{ s.src }}" srcset="{{ s.srcset }}" fetchpriority="high"{% else %}data-src="{{ s.src }}" data-srcset="{{ s.srcset }}"{% endif %}
-         sizes="100vw" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }};object-position:{{ s.focus }}">
+         sizes="{{ s.sizes }}" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }};object-position:{{ s.focus }}">
     {% endfor %}
   </div>
   <div class="hero-copy">

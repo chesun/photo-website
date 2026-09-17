@@ -256,7 +256,8 @@ def looks_like_filename(alt, name):
     'Impending Storm' is a title. Compare with punctuation and extension removed.
     """
     def squash(text):
-        return re.sub(r"[^a-z0-9]", "", Path(text).stem.lower())
+        stem = re.sub(r"-\d+$", "", Path(text).stem)   # ignore a -2 collision suffix
+        return re.sub(r"[^a-z0-9]", "", stem.lower())
     return squash(alt) == squash(name)
 
 

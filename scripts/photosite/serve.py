@@ -105,11 +105,11 @@ def serve(rebuild, dist, watch, port=8000, extra_routes=None, restart_on=()):
                     server.shutdown()
                     os.execv(sys.executable, [sys.executable] + sys.argv)
                 print(f"\nChange detected ({os.path.relpath(changed[0])}{', ...' if len(changed) > 1 else ''}); rebuilding")
+                before = now        # anything written during the rebuild is picked up next tick
                 try:
                     rebuild()
                 except Exception:   # keep serving even if the build fails
                     traceback.print_exc()
-                before = snapshot(list(watch) + list(restart_on))
     except KeyboardInterrupt:
         print("\nStopping.")
         server.shutdown()

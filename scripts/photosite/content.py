@@ -15,6 +15,7 @@ the problem, so a typo in YAML shows up as one clear line, not a traceback
 deep inside the build.
 """
 
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -137,14 +138,21 @@ def load_site(path):
     return Site(**data)
 
 
-def load_series(folder, include_unpublished=False):
+def load_series(folder, include_unpublished=False, strict=False, leaving=()):
     """Load one series folder. Returns None for an unpublished series unless
-    `include_unpublished` is set (the curate page edits those too)."""
+    `include_unpublished` is set (the curate page edits those too). With
+    `strict`, files on disk that are not listed in `images` are an error
+    instead of being appended; the curate page uses that to check what it
+    just wrote, naming in `leaving` any file it is about to move out."""
     path = folder / "series.yaml"
     if not path.exists():
         raise ContentError(f"{folder}: no series.yaml")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", folder.name):
+        raise ContentError(f"{folder}: folder names must be lowercase letters, digits and dashes (they become URLs)")
     data = read_yaml(path)
     check_keys(path, data, SERIES_KEYS, SERIES_REQUIRED)
+    if not isinstance(data["title"], str) or not data["title"].strip():
+        raise ContentError(f"{path}: title must be text")
 
     # Fill in defaults for the optional keys.
     data.setdefault("layout", "column")
@@ -164,7 +172,7 @@ def load_series(folder, include_unpublished=False):
         raise ContentError(f"{path}: tone must be one of {TONES}, not {data['tone']!r}")
     if data["layout"] not in LAYOUTS:
         raise ContentError(f"{path}: layout must be one of {LAYOUTS}, not {data['layout']!r}")
-    if not isinstance(data["order"], int):
+    if not isinstance(data["order"], int) or isinstance(data["order"], bool):
         raise ContentError(f"{path}: order must be a whole number")
     if not isinstance(data["published"], bool):
         raise ContentError(f"{path}: published must be true or false")
@@ -182,10 +190,15 @@ def load_series(folder, include_unpublished=False):
     # Every listed image must exist. Every image on disk should be listed;
     # if not, append it so a fresh export is visible without editing YAML.
     images = list(data["images"] or [])
+    duplicates = sorted({f for f in images if images.count(f) > 1})
+    if duplicates:
+        raise ContentError(f"{path}: image(s) listed more than once: {duplicates}")
     missing = [f for f in images if f not in on_disk]
     if missing:
         raise ContentError(f"{path}: listed image(s) not found in folder: {missing}")
-    unlisted = [f for f in on_disk if f not in images]
+    unlisted = [f for f in on_disk if f not in images and f not in leaving]
+    if unlisted and strict:
+        raise ContentError(f"{path}: image(s) in the folder but not in `images`: {unlisted}")
     if unlisted:
         warn(f"{path}: {len(unlisted)} image(s) not in `images`, appended at the end: {unlisted}")
         images.extend(unlisted)
@@ -242,7 +255,7 @@ def load_content(content_dir):
         series = load_series(folder)
         if series is not None:
             all_series.append(series)
-    all_series.sort(key=lambda s: (s.section, s.order, s.title))
+    all_series.sort(key=lambda s: (SECTIONS.index(s.section), s.order, s.title))
 
     sections = {slug: [] for slug in SECTIONS}
     for series in all_series:

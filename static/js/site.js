@@ -1,9 +1,10 @@
 // Christina Sun — site behaviour.
 // Three small jobs: mark images loaded so they fade in over their average
 // colour, reveal elements as they scroll into view, and open PhotoSwipe.
-// Everything degrades: with JS off the CSS shows images and content at once.
+// Everything degrades: if this script does not run, the html element keeps
+// its no-js class and the CSS shows images and content at once.
 
-import PhotoSwipeLightbox from "/static/vendor/photoswipe/photoswipe-lightbox.esm.min.js";
+document.documentElement.classList.replace("no-js", "js");
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -41,8 +42,8 @@ if (reducedMotion || !("IntersectionObserver" in window)) {
     }
   }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
   belowFold.forEach((el) => observer.observe(el));
-  // Safety net: if something never intersects (odd layouts, print), show it.
-  setTimeout(() => belowFold.forEach((el) => el.classList.add("is-in")), 4000);
+  // Print shows the whole page at once.
+  window.addEventListener("beforeprint", () => belowFold.forEach((el) => el.classList.add("is-in")));
 }
 
 // --- Mobile menu -------------------------------------------------------------
@@ -50,11 +51,15 @@ if (reducedMotion || !("IntersectionObserver" in window)) {
 const toggle = document.querySelector(".menu-toggle");
 const nav = document.getElementById("site-nav");
 if (toggle && nav) {
-  toggle.addEventListener("click", () => {
-    const open = nav.classList.toggle("is-open");
+  const setMenu = (open) => {
+    nav.classList.toggle("is-open", open);
     document.body.classList.toggle("menu-open", open);
     toggle.setAttribute("aria-expanded", String(open));
     toggle.querySelector(".menu-toggle-label").textContent = open ? "Close" : "Menu";
+  };
+  toggle.addEventListener("click", () => setMenu(!nav.classList.contains("is-open")));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && nav.classList.contains("is-open")) { setMenu(false); toggle.focus(); }
   });
 }
 
@@ -62,6 +67,13 @@ if (toggle && nav) {
 
 const gallery = document.getElementById("gallery");
 if (gallery) {
+  // The lightbox stylesheet and module load only on pages with a gallery,
+  // and only after the page is showing.
+  const sheet = document.createElement("link");
+  sheet.rel = "stylesheet";
+  sheet.href = "/static/vendor/photoswipe/photoswipe.css";
+  document.head.appendChild(sheet);
+  import("/static/vendor/photoswipe/photoswipe-lightbox.esm.min.js").then(({ default: PhotoSwipeLightbox }) => {
   const lightbox = new PhotoSwipeLightbox({
     gallery: "#gallery",
     children: "a",
@@ -84,12 +96,14 @@ if (gallery) {
       appendTo: "root",
       onInit: (el, pswp) => {
         pswp.on("change", () => {
-          el.textContent = pswp.currSlide.data.element?.dataset.caption || "";
+          const link = pswp.currSlide.data.element;
+          el.textContent = (link && link.dataset.caption) || "";
         });
       },
     });
   });
   lightbox.init();
+  }).catch(() => { /* no lightbox; the photographs are still on the page */ });
 }
 
 // --- Landing slideshow -------------------------------------------------------
@@ -115,6 +129,7 @@ if (hero) {
   }
   function advance() {
     const next = (current + 1) % slides.length;
+    if (!slides[next].complete || !slides[next].naturalWidth) return;   // not there yet: hold this slide
     slides[current].classList.remove("is-active");
     slides[next].classList.add("is-active");
     current = next;
@@ -132,7 +147,7 @@ if (hero) {
   if (!reducedMotion) {
     load(slides[1]);
     document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
-    start();
+    if (!document.hidden) start();
   }
 }
 

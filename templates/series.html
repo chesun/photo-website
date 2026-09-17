@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% set active_section = series.section %}
 {% block title %}{{ series.title }} — {{ site.title }}{% endblock %}
-{% block description %}{{ series.statement or site.description }}{% endblock %}
+{% block description %}{{ series.statement or (series.title ~ ": " ~ frames|length ~ " photographs in " ~ series.tone ~ " by " ~ site.title ~ ".") }}{% endblock %}
 {% block body_class %}page page-series{% endblock %}
 
 {% block main %}
-<header class="series-head reveal">
-  <p class="eyebrow"><a href="/{{ series.section }}/">{{ site.section_label(series.section) }}</a></p>
+<header class="series-head">
+  <p class="eyebrow"><a class="eyebrow-link" href="/{{ series.section }}/">{{ site.section_label(series.section) }}</a></p>
   <h1 class="series-title">{{ series.title }}</h1>
   <p class="tone-tag">{{ series.tone }}</p>
   {% if series.statement %}
@@ -19,7 +19,8 @@
        data-caption="{{ f.caption }}" aria-label="Open {{ f.alt }} full screen">
       <img src="{{ f.src }}" srcset="{{ f.srcset }}" sizes="{{ sizes }}"
            width="{{ f.width }}" height="{{ f.height }}" alt="{{ f.alt }}"
-           {% if f.eager %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async">
+           {% if f.eager %}loading="eager"{% else %}loading="lazy"{% endif %}{% if f.priority %} fetchpriority="high"{% endif %} decoding="async"
+           onload="this.classList.add('is-loaded')">
     </a>
 {% endmacro %}
 
@@ -29,7 +30,7 @@
   {% for row in rows %}
   <div class="grid-row">
     {% for f in row %}
-    <figure class="frame frame-grid reveal" style="--w:{{ f.width_pct }}%;--ratio:{{ f.ratio }};--tone:{{ f.color }}">
+    <figure class="frame frame-grid{% if not f.eager %} reveal{% endif %}" style="--w:{{ f.width_pct }}%;--ratio:{{ f.ratio }};--tone:{{ f.color }}">
       {{ photo(f, "(min-width: 800px) min(" ~ f.width_pct ~ "vw, calc(1600px * " ~ f.width_pct ~ " / 100)), calc(100vw - 32px)") }}
     </figure>
     {% endfor %}
@@ -40,7 +41,7 @@
 {# layout: column — one photograph per row, sized to the viewport #}
 <div class="column" id="gallery">
   {% for f in frames %}
-  <figure class="frame reveal" style="--ratio:{{ f.ratio }};--w:{{ f.width }};--h:{{ f.height }};--tone:{{ f.color }}">
+  <figure class="frame{% if not f.eager %} reveal{% endif %}" style="--ratio:{{ f.ratio }};--w:{{ f.width }};--h:{{ f.height }};--tone:{{ f.color }}">
     {{ photo(f, f.sizes) }}
     {% if f.caption %}<figcaption>{{ f.caption }}</figcaption>{% endif %}
   </figure>

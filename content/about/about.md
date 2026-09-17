@@ -1,4 +1,4 @@
-## Photography has helped me see the extraordinary in our seemingly ordinary world, and I hope to show you my perspective on this world through my photographs.
+# Photography has helped me see the extraordinary in our seemingly ordinary world, and I hope to show you my perspective on this world through my photographs.
 
 I am a photographer and a Ph.D candidate studying behavioral economics at the University of California, Davis.
 

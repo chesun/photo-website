@@ -11,7 +11,7 @@ photosite/content.py (what the content looks like), photosite/images.py
 """
 
 import argparse
-import datetime
+import html
 import shutil
 import sys
 import time
@@ -22,6 +22,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from photosite import content as content_lib, images, render  # noqa: E402
 from photosite.content import ContentError  # noqa: E402
+
+# The output folder is rebuilt from scratch every time (variants are hard
+# links into the cache, so this is cheap) and nothing stale survives.
 
 REPO = Path(__file__).resolve().parent.parent
 CONTENT = REPO / "content"
@@ -35,6 +38,7 @@ def build():
     """One full build. Returns the loaded content (the dev server reuses it)."""
     started = time.perf_counter()
     site_content = content_lib.load_content(CONTENT)
+    shutil.rmtree(DIST, ignore_errors=True)
     DIST.mkdir(parents=True, exist_ok=True)
     renderer = render.Renderer(TEMPLATES, site_content, DIST)
 
@@ -47,21 +51,28 @@ def build():
     for series in site_content.series:
         frames = []
         og_image = None
+        done = {}                     # filename -> (info, published), for the slideshow
         for position, filename in enumerate(series.images, start=1):
-            info = images.process(series.image_path(filename), CACHE)
+            source = series.image_path(filename)
+            try:
+                info = images.process(source, CACHE)
+            except OSError as error:      # a truncated or unreadable file
+                raise ContentError(f"{source}: {error}") from None
             published = images.publish(info, DIST / "img" / series.slug, Path(filename).stem)
             frames.append(renderer.frame(series, filename, info, published, position))
+            done[filename] = (info, published)
             if filename == series.cover:
                 covers.setdefault(series.section, []).append(renderer.cover(series, info, published))
                 og_image = "/img/" + series.slug + "/" + published["medium"]
-            if filename in series.featured:
-                slides.append(renderer.slide(series, filename, info, published))
             processed += 1
+        # The landing slideshow runs in `featured` order within each series.
+        for filename in series.featured:
+            slides.append(renderer.slide(series, filename, *done[filename]))
         # 2. One page per series. Grid layout gets justified rows solved here;
         #    column layout needs nothing more than the frames in order.
         rows = render.justified_rows(frames, target_height=0.24, gap=0.005) if series.layout == "grid" else None
         renderer.write(series.url, "series.html", series=series, frames=frames, rows=rows, og_image=og_image)
-        pages.append((series.url, latest_change(series.folder)))
+        pages.append(series.url)
 
     # 3. Section index pages.
     for item in site_content.site.nav:
@@ -77,7 +88,7 @@ def build():
             rows = render.cover_rows(section_covers, target_height=0.36, gap=0.02)
         renderer.write(f"/{slug}/", "section.html", section=slug, label=item["label"], rows=rows,
                        og_image=section_covers[0]["src"] if section_covers else None)
-        pages.append((f"/{slug}/", today()))
+        pages.append(f"/{slug}/")
 
     # 4. About, landing, 404.
     portrait = images.process(site_content.about.portrait, CACHE)
@@ -88,11 +99,11 @@ def build():
                              "width": portrait.width, "height": portrait.height,
                              "color": portrait.average_color},
                    og_image="/img/about/" + portrait_files["medium"])
-    pages.append(("/about/", latest_change(CONTENT / "about")))
+    pages.append("/about/")
     if not slides:
         content_lib.warn("no series has `featured` images; the landing slideshow will be empty")
     renderer.write("/", "landing.html", slides=slides, og_image=slides[0]["src"] if slides else None)
-    pages.insert(0, ("/", today()))
+    pages.insert(0, "/")
     renderer.write("/404.html", "404.html", og_image=slides[0]["src"] if slides else None)
 
     # 5. Static assets (CSS, JS, fonts, PhotoSwipe), favicon at the root,
@@ -108,21 +119,13 @@ def build():
     return site_content
 
 
-def today():
-    return datetime.date.today().isoformat()
-
-
-def latest_change(folder):
-    """The date of the most recently modified file in a folder, for the sitemap."""
-    newest = max(p.stat().st_mtime for p in Path(folder).iterdir() if p.is_file())
-    return datetime.date.fromtimestamp(newest).isoformat()
-
-
 def write_sitemap(base_url, pages):
+    """A sitemap of page URLs. No lastmod: file times mean nothing in a fresh
+    checkout, and a wrong date is worse than none."""
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for url, lastmod in pages:
-        lines.append(f"  <url><loc>{base_url}{url}</loc><lastmod>{lastmod}</lastmod></url>")
+    for url in pages:
+        lines.append(f"  <url><loc>{base_url}{html.escape(url)}</loc></url>")
     lines.append("</urlset>")
     (DIST / "sitemap.xml").write_text("\n".join(lines) + "\n")
 

@@ -5,10 +5,10 @@
 
 {% block main %}
 <article class="about">
-  <figure class="about-portrait reveal" style="--tone:{{ portrait.color }}">
-    <img src="{{ portrait.src }}" width="{{ portrait.width }}" height="{{ portrait.height }}" alt="Christina Sun" loading="eager" decoding="async">
+  <figure class="about-portrait" style="--tone:{{ portrait.color }}">
+    <img src="{{ portrait.src }}" width="{{ portrait.width }}" height="{{ portrait.height }}" alt="Christina Sun" loading="eager" decoding="async" onload="this.classList.add('is-loaded')">
   </figure>
-  <div class="about-text prose reveal">
+  <div class="about-text prose">
     {{ body | safe }}
     <p class="about-links">
       <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>

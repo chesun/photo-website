@@ -149,11 +149,11 @@ Rules the build enforces:
 
 ## Build script behavior (`python scripts/build.py`)
 
-- For every source image generate resized variants: thumbnail (~480px long edge), medium (~1600px), large (~2400px). Column layout means most visitors download the medium variant at desktop widths, so choose its size and JPEG quality with that in mind. Emit `srcset`/`sizes`; lazy-load below the fold.
+- For every source image generate resized variants: thumbnail (480px long edge), small (1000px, what a 3x phone picks), medium (1600px), large (2400px, saved at a slightly lower JPEG quality because it is the heaviest and what retina desktops pick). Output names carry a short content hash so a re-export gets a new URL. Emit `srcset`/`sizes`; lazy-load below the fold; only the first frame gets `fetchpriority=high`.
 - **Record each image's pixel dimensions and average color at build time** and bake them into the HTML: every image gets an exact `aspect-ratio` box with its average color as the background, so the page never shifts layout and photos fade in over a matching tone while loading. This is required; it is most of what makes a photo site feel expensive.
 - Strip EXIF (including GPS) from output images; preserve orientation; convert to sRGB.
-- Incremental builds: cache by content hash in `.cache/`; unchanged images are never reprocessed. Rebuilds with no image changes must be near-instant. Swapping a CDN copy for a Lightroom re-export of the same frame is just a new hash.
-- Generate `sitemap.xml`, a designed 404 page, favicon + apple-touch-icon, and per-page meta/OpenGraph tags (og:image = series cover).
+- Incremental builds: cache by content hash (plus a hash of the variant settings) in `.cache/`; unchanged images are never reprocessed. `dist/` is deleted and rebuilt on every build, with variants hard-linked from the cache, so rebuilds with no image changes stay near-instant and nothing stale survives. Swapping a CDN copy for a Lightroom re-export of the same frame is just a new hash.
+- Generate `sitemap.xml` (URLs only; no lastmod, since file times mean nothing in a fresh checkout), a designed 404 page, favicon + apple-touch-icon, and per-page meta/OpenGraph tags (og:image = series cover; a series without a statement gets a generated description).
 - `--serve`: local dev server with rebuild-on-change (a simple polling watcher is fine), restarting itself when a build script changes. Also serves the curate page at `/_curate/`.
 - Fail loudly and helpfully on bad YAML, missing files, unknown keys, or non-image files.
 
@@ -180,7 +180,7 @@ Served by `--serve` at `/_curate/`, never written to `dist/`. Set in the site's 
 - Focal-point tool: the frame large, a draggable ring for the anchor, the desktop (16:9) or phone (9:16) crop window drawn on the photograph itself, arrow-key nudging, Enter to accept.
 - Landing strip at the top: the slideshow in running order (section, series order, featured order), each slide cropped at its focal point; click to adjust. This is where the review-by-eye pass happens.
 - Add photos: JPEG upload into a series folder, appended to the order, non-JPEGs refused, name collisions suffixed. Holding section: files under `content/_removed/` and `content/_unplaced/`, to place into a series or delete permanently (with confirmation). New series: title, section, tone, order; creates an empty, unpublished `series.yaml`.
-- Save writes `images`, `cover`, `featured`, and `focal` by replacing those blocks in the YAML text, so every other key and comment survives; the server re-validates and refuses a bad save. The dev server's watcher then rebuilds.
+- Save writes `images`, `cover`, `featured`, and `focal` by replacing those blocks in the YAML text, so every other key and comment survives; the server validates the result strictly and, if it would not load, restores the previous text and refuses, so a refused write leaves nothing behind. Removing the last photograph of a published series is refused (unpublish it first). Requests are accepted only from the page itself (same origin, JSON body). The dev server's watcher then rebuilds.
 - Thumbnails and medium copies come from the image cache through a `/_curate/img/` route. No dependencies beyond the standard library, Pillow, and PyYAML.
 
 ## Design system
@@ -223,13 +223,13 @@ The same justified rows at a smaller target height, about a fifth of the content
 
 ### Landing slideshow
 
-Full-viewport crossfading slideshow of every image marked `featured` across all published series: ~6s hold per image, ~1.4s opacity crossfade, and a barely-perceptible slow scale (1.0 → 1.04 over the hold) for life. First slide ships as a high-priority preload; subsequent slides load just-in-time. Each slide is cropped to the viewport at its `focal` point from `series.yaml` (CSS `object-position`, default centre), so a tall frame can keep its sky or its ground. The site header is not shown on the landing page: the wordmark, the tagline (serif italic), and the five section links sit centred over the image, inside one soft radial scrim, so the navigation never competes with a light sky. A quiet line with Instagram and email sits at the foot. Pause the cycle when the tab is hidden. Under `prefers-reduced-motion`, show a single static image.
+Full-viewport crossfading slideshow of every image marked `featured` across all published series, in section order (Landscape, People, Interludes, Archive), then series order, then the order of each `featured` list: ~6s hold per image, ~1.4s opacity crossfade, and a barely-perceptible slow scale (1.0 → 1.04 over the hold) for life. First slide ships as a high-priority preload; subsequent slides load just-in-time. Each slide is cropped to the viewport at its `focal` point from `series.yaml` (CSS `object-position`, default centre), so a tall frame can keep its sky or its ground. The site header is not shown on the landing page: the wordmark, the tagline (serif italic), and the five section links sit centred over the image, inside one soft radial scrim, so the navigation never competes with a light sky. A quiet line with Instagram and email sits at the foot. Pause the cycle when the tab is hidden. Under `prefers-reduced-motion`, show a single static image.
 
 **Motion.** One orchestrated moment per page, not scattered effects: page content fades in briefly on load; column and grid items reveal on scroll via IntersectionObserver with a subtle staggered fade-up (opacity + ~8px, ~300ms). All motion uses gentle easing and is fully disabled under `prefers-reduced-motion`.
 
 **Lightbox.** Skin PhotoSwipe to match: near-black backdrop, minimal chrome, captions set in the grotesque at caption size, keyboard and swipe navigation. It should feel native to the site, not like a plugin.
 
-**Micro-detail floor (non-negotiable):** visible `:focus-visible` states; a styled text-selection color; ≥44px touch targets; active-section indication in the nav; a designed (not default) 404; correct favicons; no layout shift anywhere (verify with the aspect-ratio boxes above).
+**Micro-detail floor (non-negotiable):** visible `:focus-visible` states; a styled text-selection color; ≥44px touch targets (every link, footers included); muted text at or above 4.5:1 contrast; active-section indication in the nav; a designed (not default) 404; correct favicons; no layout shift anywhere (verify with the aspect-ratio boxes above).
 
 **Favicon.** A near-black disc on the site's off-white, a sun for Sun: `favicon.svg` for modern browsers, `favicon.ico` at 16, 32, and 48px, and a 180px `apple-touch-icon.png`. Generated once by `scripts/make_favicons.py` and committed under `static/`.
 
