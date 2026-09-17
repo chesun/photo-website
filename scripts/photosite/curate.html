@@ -52,6 +52,7 @@
   .photo { position: relative; height: 136px; border-radius: 3px; overflow: hidden; background: var(--soft); cursor: grab; flex: 0 0 auto; outline: 0; }
   .photo img { height: 100%; width: auto; display: block; pointer-events: none; }
   .photo.dragging { opacity: .3; }
+  .photo.menu-open { overflow: visible; z-index: 4; }
   .photo::before { content: ""; position: absolute; top: 0; bottom: 0; width: 3px; background: var(--ink); opacity: 0; }
   .photo.drop-before::before { left: -6px; opacity: 1; }
   .photo.drop-after::before { right: -6px; opacity: 1; }
@@ -62,7 +63,7 @@
   .tools button { padding: 4px 8px; font-size: 12px; line-height: 1; border-radius: 3px; background: rgba(255,255,255,.94); color: var(--ink); border: 0; }
   .tools button.on { background: var(--ink); color: #fff; }
   .tools button:hover { background: #fff; }
-  .menu { position: absolute; right: 6px; bottom: 34px; background: #fff; border: 1px solid var(--rule); border-radius: var(--r); box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 6px; display: none; z-index: 3; min-width: 170px; }
+  .menu { position: absolute; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid var(--rule); border-radius: var(--r); box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 6px; display: none; z-index: 3; min-width: 170px; }
   .menu.open { display: block; }
   .menu button, .menu select { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--ink); padding: 7px 10px; border-radius: 3px; font-size: 13px; }
   .menu button:hover { background: var(--soft); }
@@ -90,14 +91,14 @@
   .overlay.open { display: flex; }
   .overlay .label { color: #9a9a95; }
   .focal { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: center; width: min(1400px, 100%); }
-  .stage { position: relative; justify-self: center; user-select: none; touch-action: none; }
+  .stage { position: relative; justify-self: center; user-select: none; touch-action: none; overflow: hidden; border-radius: 2px; }
   .stage img { display: block; max-width: calc(100vw - 420px); max-height: calc(100vh - 80px); }
   .stage .crop { position: absolute; border: 1px solid rgba(255,255,255,.85); box-shadow: 0 0 0 9999px rgba(0,0,0,.28); pointer-events: none; display: none; }
   .stage .crop.on { display: block; }
   .stage .crop span { position: absolute; left: 6px; top: 6px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.5); padding: 2px 6px; }
-  .stage .dot { position: absolute; width: 22px; height: 22px; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.5); cursor: grab; }
+  .stage .dot { position: absolute; width: 22px; height: 22px; z-index: 2; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.5); cursor: grab; }
   .stage .dot::after { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; background: #fff; border-radius: 50%; }
-  .side { display: flex; flex-direction: column; gap: 16px; }
+  .side { display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; }
   .side .title { font-family: var(--serif); font-size: 22px; font-weight: 300; }
   .side .file { color: #9a9a95; font-size: 12px; }
   .side .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
