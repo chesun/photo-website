@@ -189,11 +189,17 @@ def load_series(folder, include_unpublished=False):
     if unlisted:
         warn(f"{path}: {len(unlisted)} image(s) not in `images`, appended at the end: {unlisted}")
         images.extend(unlisted)
-    if not images:
-        raise ContentError(f"{folder}: a series needs at least one image")
+    if not images and data["published"]:
+        raise ContentError(f"{folder}: a published series needs at least one image")
 
-    for key in ("cover", *data["featured"], *data["captions"], *data["focal"]):
-        name = data["cover"] if key == "cover" else key
+    # A series created from the curate page starts empty and unpublished, with
+    # no cover yet. Once it has images, a missing cover means the first one.
+    if not data["cover"] and images:
+        data["cover"] = images[0]
+    references = list(data["featured"]) + list(data["captions"]) + list(data["focal"])
+    if data["cover"]:
+        references.insert(0, data["cover"])
+    for name in references:
         if name not in images:
             raise ContentError(f"{path}: {name!r} is referenced but not in `images`")
     # A focal point is where the frame is anchored when it must be cropped
@@ -207,7 +213,7 @@ def load_series(folder, include_unpublished=False):
         slug=folder.name, folder=folder, title=str(data["title"]),
         section=data["section"], order=data["order"], tone=data["tone"],
         layout=data["layout"], published=data["published"], statement=data["statement"],
-        cover=data["cover"], featured=list(data["featured"]), images=images,
+        cover=data["cover"] or "", featured=list(data["featured"]), images=images,
         captions={k: str(v) for k, v in data["captions"].items()},
         focal={k: v.strip() for k, v in data["focal"].items()},
     )

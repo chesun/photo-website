@@ -76,17 +76,20 @@ focal:                    # optional, filename: where to anchor a cropped frame
 
 The build stops with a clear message if a listed image is missing, a key is misspelled, or a non-image file is in a series folder.
 
-## Arranging the order: the curate page
+## The curate page
 
-Run `--serve` and open http://127.0.0.1:8000/_curate/. It shows every series, published or not, with its photographs in order, and a strip at the top showing the landing slideshow in the order it will run.
+Run `--serve` and open http://127.0.0.1:8000/_curate/. It is the place to arrange the site by eye, and it can add and remove photographs too. Every change goes straight into `content/`, the site rebuilds on its own, and `git status` shows what changed so you can commit when you are happy.
 
-- **Drag** a photograph to reorder it within its series.
-- **Click** a photograph to make it the cover shown on the section index.
-- **★** adds or removes it from the landing slideshow.
-- **⌖** opens the focal-point tool: click where the crop should be anchored, with live previews of the wide-screen and phone crops. Clicking a slide in the landing strip opens the same tool.
-- **Save** on a series (or **Save all**) writes `images`, `cover`, `featured`, and `focal` back into that `series.yaml`. Everything else in the file, including comments, is left as it was. The site rebuilds on its own.
+- **Landing slideshow strip** at the top, in the order the show will run. Click a slide to set its focal point.
+- **Drag** a photograph to reorder it, or focus it and use the arrow keys.
+- **◧** makes it the cover shown on the section index. **★** adds or removes it from the landing slideshow. **⌖** opens the focal-point tool: drag the ring to where the crop should be anchored while the outline shows exactly what the desktop or phone slideshow will keep; arrow keys nudge.
+- **⋯** moves the photograph to another series (its caption and focal point travel with it) or removes it. Removed files are not deleted; they go to `content/_removed/<series>/`.
+- **Add photos** on a series uploads JPEGs into its folder and appends them to the order. Filenames are kept, with spaces turned into dashes; a name already in use gets a `-2` suffix. Anything that is not a JPEG is refused.
+- **Holding** at the bottom lists the files in `content/_removed/` and `content/_unplaced/`. Place one into any series, or delete it for good (choose Delete twice).
+- **New series** in the top bar creates `content/series/<slug>/series.yaml` for an empty, unpublished series. Add photographs, arrange them, then set `published: true` in the YAML when it is ready.
+- **Save** writes `images`, `cover`, `featured`, and `focal` for a series (or **Save all**). Everything else in the file, including comments, is left as it was. A series with unsaved changes must be saved before photos are added or moved.
 
-The page is served only by the dev server; nothing of it goes into `dist/`. You can always edit the YAML by hand instead.
+Nothing of the page goes into `dist/`. You can always edit the YAML by hand instead.
 
 ## The landing slideshow
 

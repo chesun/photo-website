@@ -88,3 +88,6 @@ Slides are cropped to the viewport, and some frames were framed awkwardly by a c
 **Phase 3 built: the curate page.**
 A single HTML page served by the dev server with four JSON and image routes behind it. Two choices worth recording: the YAML is edited as text, block by block, rather than round-tripped through PyYAML, so comments and key order in `series.yaml` survive a save; and thumbnails are served from the image cache through the dev server rather than from `dist/`, so unpublished series can be curated before they are ever built. The first migration run had written filename-only captions for Graduations and Quiet Days (the check was fixed while that run was in progress); those were stripped.
 
+**The curate page also adds, moves, and removes photographs, and creates series.**
+Christina asked for add and remove after trying the first version. Removal moves a file to `content/_removed/<series>/` rather than deleting it, and permanent deletion exists only for the holding folders, with a confirm step, so a slip on a page that edits the source of truth is always reversible. Uploads accept JPEG only, matching the Lightroom export the site is built around. New series start unpublished and empty so photographs can be gathered before anything is built; the content loader was relaxed to allow that one case.
+

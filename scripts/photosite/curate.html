@@ -3,207 +3,465 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Curate — christinasunphoto.com</title>
+<title>Curate — Christina Sun</title>
+<link rel="stylesheet" href="/static/fonts/fonts.css">
 <style>
-  :root { --bg: #f4f3ef; --ink: #1a1a1a; --mute: #77766f; --line: #dad8d0; --accent: #1a1a1a; --warn: #b3261e; }
+  :root {
+    --bg: #fbfbf9; --panel: #ffffff; --ink: #1a1a1a; --mute: #7b7a75; --rule: #e6e5e0; --soft: #f1f0ec;
+    --dark: #0e0e0e; --warn: #9d2f24; --ok: #2d6a4f;
+    --sans: "Inter", "Helvetica Neue", Arial, sans-serif; --serif: "Newsreader", Georgia, serif;
+    --track: 0.16em; --r: 4px;
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 -apple-system, "Inter", "Helvetica Neue", sans-serif; }
-  header.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 12px 24px; background: rgba(244,243,239,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-  header.top h1 { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; font-weight: 500; margin: 0 auto 0 0; }
-  .hint { color: var(--mute); font-size: 12px; }
-  button { font: inherit; border: 1px solid var(--ink); background: var(--ink); color: #fff; padding: 6px 14px; border-radius: 4px; cursor: pointer; }
-  button.secondary { background: transparent; color: var(--ink); }
-  button:disabled { opacity: .35; cursor: default; }
-  main { padding: 16px 24px 80px; }
-  h2.section { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); margin: 36px 0 12px; font-weight: 500; }
-  .series { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px 16px; margin-bottom: 14px; }
-  .series.dirty { border-color: var(--ink); }
-  .series-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
-  .series-head .title { font-size: 17px; font-weight: 500; }
-  .series-head .meta { color: var(--mute); font-size: 12px; }
-  .series-head .save { margin-left: auto; }
-  .series.error { color: var(--warn); }
-  .strip { display: flex; flex-wrap: wrap; gap: 8px; }
-  .photo { position: relative; height: 150px; border-radius: 3px; overflow: hidden; background: #ddd; cursor: grab; flex: 0 0 auto; }
+  html { background: var(--bg); }
+  body { margin: 0; color: var(--ink); font: 300 14px/1.5 var(--sans); }
+  button { font: inherit; cursor: pointer; border-radius: var(--r); border: 1px solid var(--ink); background: var(--ink); color: #fff; padding: 7px 14px; font-weight: 400; }
+  button.quiet { background: transparent; color: var(--ink); border-color: var(--rule); }
+  button.quiet:hover { border-color: var(--ink); }
+  button:disabled { opacity: .3; cursor: default; }
+  button:focus-visible, .photo:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  select, input[type=text], input[type=number] { font: inherit; padding: 6px 8px; border: 1px solid var(--rule); border-radius: var(--r); background: #fff; color: var(--ink); }
+  .label { font-size: 11px; font-weight: 400; letter-spacing: var(--track); text-transform: uppercase; color: var(--mute); }
+
+  /* top bar */
+  .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 20px; padding: 14px 32px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+  .top .wordmark { font-size: 12px; font-weight: 400; letter-spacing: 0.28em; text-transform: uppercase; }
+  .top .wordmark span { color: var(--mute); margin-left: 12px; letter-spacing: var(--track); }
+  .top .status { margin-left: auto; color: var(--mute); font-size: 13px; }
+  .top .status.dirty { color: var(--ink); }
+
+  main { max-width: 1480px; margin: 0 auto; padding: 24px 32px 120px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--mute); font-size: 12.5px; margin: 8px 0 28px; }
+  .legend b { font-weight: 400; color: var(--ink); }
+  h2.section { font-family: var(--serif); font-weight: 300; font-size: 26px; margin: 40px 0 14px; }
+  h2.section small { font-family: var(--sans); font-size: 11px; letter-spacing: var(--track); text-transform: uppercase; color: var(--mute); margin-left: 14px; }
+
+  /* cards */
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px 20px; margin-bottom: 16px; transition: border-color 200ms; }
+  .card.dirty { border-color: var(--ink); }
+  .card.error { border-color: var(--warn); color: var(--warn); }
+  .card-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+  .card-head .title { font-family: var(--serif); font-size: 22px; font-weight: 300; }
+  .card-head .meta { color: var(--mute); font-size: 12.5px; }
+  .card-head .actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .card-head .unsaved { font-size: 12px; color: var(--mute); }
+  .empty { color: var(--mute); padding: 18px 0 6px; }
+
+  /* photographs */
+  .strip { display: flex; flex-wrap: wrap; gap: 10px; }
+  .photo { position: relative; height: 136px; border-radius: 3px; overflow: hidden; background: var(--soft); cursor: grab; flex: 0 0 auto; outline: 0; }
   .photo img { height: 100%; width: auto; display: block; pointer-events: none; }
-  .photo.dragging { opacity: .35; }
-  .photo.over { outline: 2px solid var(--ink); outline-offset: -2px; }
-  .badge { position: absolute; left: 6px; top: 6px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; background: rgba(255,255,255,.92); padding: 2px 6px; border-radius: 3px; }
-  .tools { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 4px; opacity: 0; transition: opacity 120ms; }
-  .photo:hover .tools, .photo.featured .tools { opacity: 1; }
-  .tools button { padding: 3px 7px; font-size: 11px; border-radius: 3px; background: rgba(255,255,255,.92); color: var(--ink); border: 0; }
+  .photo.dragging { opacity: .3; }
+  .photo::before { content: ""; position: absolute; top: 0; bottom: 0; width: 3px; background: var(--ink); opacity: 0; }
+  .photo.drop-before::before { left: -6px; opacity: 1; }
+  .photo.drop-after::before { right: -6px; opacity: 1; }
+  .badge { position: absolute; left: 6px; top: 6px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; background: rgba(251,251,249,.94); color: var(--ink); padding: 3px 7px; border-radius: 3px; }
+  .badge.star { left: auto; right: 6px; background: var(--ink); color: #fff; }
+  .tools { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; gap: 4px; padding: 6px; background: linear-gradient(transparent, rgba(0,0,0,.55)); opacity: 0; transition: opacity 120ms; }
+  .photo:hover .tools, .photo:focus-within .tools, .photo.menu-open .tools { opacity: 1; }
+  .tools button { padding: 4px 8px; font-size: 12px; line-height: 1; border-radius: 3px; background: rgba(255,255,255,.94); color: var(--ink); border: 0; }
   .tools button.on { background: var(--ink); color: #fff; }
-  .caption { position: absolute; left: 0; right: 0; bottom: 0; font-size: 10px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.55)); padding: 14px 6px 4px; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tools button:hover { background: #fff; }
+  .menu { position: absolute; right: 6px; bottom: 34px; background: #fff; border: 1px solid var(--rule); border-radius: var(--r); box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 6px; display: none; z-index: 3; min-width: 170px; }
+  .menu.open { display: block; }
+  .menu button, .menu select { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--ink); padding: 7px 10px; border-radius: 3px; font-size: 13px; }
+  .menu button:hover { background: var(--soft); }
+  .menu .danger { color: var(--warn); }
+  .menu .confirm { padding: 6px 10px; font-size: 12px; color: var(--mute); }
+  .menu .confirm button { display: inline-block; width: auto; padding: 4px 8px; border: 1px solid var(--rule); margin-right: 6px; }
+
   /* landing preview */
-  .landing { display: flex; gap: 8px; flex-wrap: wrap; }
-  .slide { width: 224px; aspect-ratio: 16 / 9; background: #ddd; overflow: hidden; border-radius: 3px; position: relative; cursor: pointer; }
+  .landing { display: flex; flex-wrap: wrap; gap: 12px; }
+  .slide { width: 236px; flex: 0 0 auto; cursor: pointer; }
+  .slide .frame { aspect-ratio: 16 / 9; overflow: hidden; border-radius: 3px; background: var(--soft); position: relative; }
   .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .slide .badge { left: auto; right: 6px; }
-  /* focal overlay */
-  .overlay { position: fixed; inset: 0; z-index: 20; background: rgba(20,20,20,.94); display: none; align-items: center; justify-content: center; gap: 24px; padding: 24px; color: #fff; }
+  .slide .n { position: absolute; left: 6px; top: 6px; font-size: 10px; background: rgba(251,251,249,.94); padding: 2px 6px; border-radius: 3px; letter-spacing: .1em; }
+  .slide .who { font-size: 11.5px; color: var(--mute); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .slide:hover .frame { outline: 2px solid var(--ink); outline-offset: -2px; }
+
+  /* holding */
+  .held { display: flex; flex-wrap: wrap; gap: 10px; }
+  .held .photo { cursor: default; }
+  .held .photo .tools { opacity: 1; background: none; justify-content: flex-start; padding: 0; }
+  .held .photo .tools select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  /* overlays */
+  .overlay { position: fixed; inset: 0; z-index: 20; background: rgba(14,14,14,.96); color: #fff; display: none; align-items: center; justify-content: center; padding: 28px; }
   .overlay.open { display: flex; }
-  .focal-stage { position: relative; max-width: 58vw; max-height: 84vh; cursor: crosshair; }
-  .focal-stage img { max-width: 58vw; max-height: 84vh; display: block; }
-  .focal-dot { position: absolute; width: 18px; height: 18px; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(0,0,0,.6); pointer-events: none; }
-  .focal-side { width: 30vw; display: flex; flex-direction: column; gap: 12px; }
-  .preview { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #000; border-radius: 3px; }
-  .preview.tall { aspect-ratio: 9 / 16; width: 40%; }
-  .preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .focal-side .row { display: flex; gap: 8px; align-items: center; }
-  .focal-side .hint { color: #bbb; }
-  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 4px; font-size: 13px; display: none; z-index: 30; }
+  .overlay .label { color: #9a9a95; }
+  .focal { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: center; width: min(1400px, 100%); }
+  .stage { position: relative; justify-self: center; user-select: none; touch-action: none; }
+  .stage img { display: block; max-width: calc(100vw - 420px); max-height: calc(100vh - 80px); }
+  .stage .crop { position: absolute; border: 1px solid rgba(255,255,255,.85); box-shadow: 0 0 0 9999px rgba(0,0,0,.28); pointer-events: none; display: none; }
+  .stage .crop.on { display: block; }
+  .stage .crop span { position: absolute; left: 6px; top: 6px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.5); padding: 2px 6px; }
+  .stage .dot { position: absolute; width: 22px; height: 22px; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.5); cursor: grab; }
+  .stage .dot::after { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; background: #fff; border-radius: 50%; }
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .side .title { font-family: var(--serif); font-size: 22px; font-weight: 300; }
+  .side .file { color: #9a9a95; font-size: 12px; }
+  .side .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .side code { font-size: 13px; background: rgba(255,255,255,.08); padding: 3px 8px; border-radius: 3px; }
+  .side .toggle { display: flex; gap: 6px; }
+  .side .toggle button { padding: 5px 10px; font-size: 12px; background: transparent; color: #fff; border-color: #444; }
+  .side .toggle button.on { background: #fff; color: var(--dark); border-color: #fff; }
+  .side button.light { background: #fff; color: var(--dark); border-color: #fff; }
+  .side button.ghost { background: transparent; color: #fff; border-color: #555; }
+  .side .help { color: #9a9a95; font-size: 12.5px; line-height: 1.5; }
+
+  .modal { background: var(--panel); color: var(--ink); border-radius: 6px; padding: 24px 26px; width: min(460px, 100%); display: grid; gap: 14px; }
+  .modal h3 { font-family: var(--serif); font-weight: 300; font-size: 24px; margin: 0; }
+  .modal label { display: grid; gap: 5px; }
+  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 9px 16px; border-radius: var(--r); font-size: 13px; display: none; z-index: 40; max-width: 80vw; }
+  .toast.warn { background: var(--warn); }
+  input[type=file] { display: none; }
 </style>
 </head>
 <body>
 <header class="top">
-  <h1>Curate</h1>
-  <span class="hint">Drag to reorder · click a photo to make it the cover · ★ puts it in the landing slideshow · ⌖ sets where a crop is anchored</span>
+  <div class="wordmark">Christina Sun <span>Curate</span></div>
+  <button class="quiet" id="new-series">New series</button>
+  <span class="status" id="status">Everything saved</span>
   <button id="save-all" disabled>Save all</button>
 </header>
-<main id="main"><p class="hint">Loading…</p></main>
 
-<div class="overlay" id="overlay">
-  <div class="focal-stage" id="stage"><img id="stage-img" alt=""><div class="focal-dot" id="dot"></div></div>
-  <div class="focal-side">
-    <div><strong id="focal-title"></strong><div class="hint" id="focal-file"></div></div>
-    <div class="hint">Click on the photograph where the crop should be anchored. The previews show the landing slideshow crop on a wide screen and on a phone.</div>
-    <div class="preview" id="prev-wide"><img id="prev-wide-img" alt=""></div>
-    <div class="preview tall" id="prev-tall"><img id="prev-tall-img" alt=""></div>
-    <div class="row"><span>Focal point:</span><code id="focal-value">50% 50%</code><button class="secondary" id="focal-reset" style="color:#fff;border-color:#888">Reset to centre</button></div>
-    <div class="row"><button id="focal-done">Done</button><button class="secondary" id="focal-cancel" style="color:#fff;border-color:#888">Cancel</button></div>
+<main id="main"><p class="empty">Loading…</p></main>
+
+<!-- Focal point tool -->
+<div class="overlay" id="focal-overlay">
+  <div class="focal">
+    <div class="stage" id="stage">
+      <img id="stage-img" alt="">
+      <div class="crop on" id="crop-wide"><span>Desktop</span></div>
+      <div class="crop" id="crop-tall"><span>Phone</span></div>
+      <div class="dot" id="dot"></div>
+    </div>
+    <div class="side">
+      <div><div class="title" id="focal-title"></div><div class="file" id="focal-file"></div></div>
+      <div class="help">Drag the ring, or click, to choose the point the crop is anchored on. The outline shows what the landing slideshow will keep. Arrow keys nudge by 1%, with Shift by 5%.</div>
+      <div><div class="label" style="margin-bottom:6px">Preview crop</div><div class="toggle"><button id="show-wide" class="on">Desktop 16:9</button><button id="show-tall">Phone 9:16</button></div></div>
+      <div class="row"><span class="label">Focal point</span><code id="focal-value">50% 50%</code><button class="ghost" id="focal-reset">Centre</button></div>
+      <div class="row"><button class="light" id="focal-done">Done</button><button class="ghost" id="focal-cancel">Cancel</button></div>
+    </div>
   </div>
 </div>
+
+<!-- New series -->
+<div class="overlay" id="series-overlay">
+  <form class="modal" id="series-form">
+    <h3>New series</h3>
+    <label><span class="label">Title</span><input type="text" name="title" required placeholder="Sand and Stone"></label>
+    <label><span class="label">Section</span><select name="section" id="series-section"></select></label>
+    <label><span class="label">Tone</span><select name="tone" id="series-tone"></select></label>
+    <label><span class="label">Order in section (blank = last)</span><input type="number" name="order" min="0" step="10"></label>
+    <div class="help" style="color:var(--mute);font-size:12.5px">The series starts unpublished and empty. Add photographs, arrange them, then set <code>published: true</code> in its YAML when it is ready.</div>
+    <div class="row"><button type="button" class="quiet" id="series-cancel">Cancel</button><button type="submit">Create</button></div>
+  </form>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const state = { sections: [], series: [], dirty: new Set() };
+// ============================================================================
+// State and helpers
+// ============================================================================
+const state = { sections: [], tones: [], series: [], holding: [], dirty: new Set() };
 const $ = (sel, el = document) => el.querySelector(sel);
-const img = (slug, size, file) => `/_curate/img/${encodeURIComponent(slug)}/${size}/${encodeURIComponent(file)}`;
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; };
+const enc = encodeURIComponent;
+const imgUrl = (slug, size, file) => `/_curate/img/${enc(slug)}/${size}/${enc(file)}`;
+const heldUrl = (group, size, file) => `/_curate/img/_holding/${size}/${group}/${enc(file)}`;
+const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+function toast(msg, warn = false, ms = 2200) {
+  const t = $('#toast'); t.textContent = msg; t.className = 'toast' + (warn ? ' warn' : ''); t.style.display = 'block';
+  clearTimeout(t._t); t._t = setTimeout(() => (t.style.display = 'none'), ms);
+}
+async function api(path, body) {
+  const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const out = await r.json();
+  if (!r.ok) throw new Error(out.error || r.statusText);
+  return out;
+}
 async function load() {
   const data = await (await fetch('/_curate/data')).json();
-  state.sections = data.sections; state.series = data.series; state.dirty.clear();
+  Object.assign(state, data); state.dirty.clear();
   render();
 }
-
-function toast(msg, ms = 1800) {
-  const t = $('#toast'); t.textContent = msg; t.style.display = 'block';
-  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', ms);
-}
-
 function markDirty(s) { state.dirty.add(s.slug); render(); }
+function bySlug(slug) { return state.series.find((s) => s.slug === slug); }
 
-// ----------------------------------------------------------------------
+// ============================================================================
 // Rendering
-// ----------------------------------------------------------------------
-
+// ============================================================================
 function render() {
   const main = $('#main'); main.innerHTML = '';
-  // Landing preview: featured images in the order the show runs (section, series order, featured order).
-  const h = document.createElement('h2'); h.className = 'section'; h.textContent = 'Landing slideshow, in order';
+  main.appendChild(el('div', 'legend',
+    '<span><b>Drag</b> to reorder</span><span><b>◧</b> cover on the section index</span><span><b>★</b> in the landing slideshow</span><span><b>⌖</b> focal point for crops</span><span><b>⋯</b> move or remove</span>'));
+
+  // Landing preview, in the order the show runs
+  const h = el('h2', 'section', 'Landing slideshow <small>in running order · click a slide to set its focal point</small>');
   main.appendChild(h);
-  const landing = document.createElement('div'); landing.className = 'landing';
+  const landing = el('div', 'landing');
   let n = 0;
   for (const s of state.series) {
     if (s.error || !s.published) continue;
     for (const f of s.featured) {
       n++;
-      const d = document.createElement('div'); d.className = 'slide'; d.title = `${s.title} — ${f}`;
-      d.innerHTML = `<img src="${img(s.slug, 'medium', f)}" style="object-position:${s.focal[f] || '50% 50%'}"><span class="badge">${n}</span>`;
+      const d = el('div', 'slide', `<div class="frame"><img src="${imgUrl(s.slug, 'medium', f)}" style="object-position:${s.focal[f] || '50% 50%'}" alt=""><span class="n">${n}</span></div><div class="who">${escapeHtml(s.title)}</div>`);
       d.onclick = () => openFocal(s, f);
       landing.appendChild(d);
     }
   }
-  if (!n) landing.innerHTML = '<p class="hint">No featured images yet. Star some below.</p>';
+  if (!n) landing.appendChild(el('p', 'empty', 'No featured images yet. Star some below.'));
   main.appendChild(landing);
 
+  // Series by section
   for (const section of state.sections) {
-    const list = state.series.filter(s => s.section === section || (s.error && section === state.sections[0]));
+    const list = state.series.filter((s) => s.section === section || (s.error && section === state.sections[0]));
     if (!list.length) continue;
-    const h2 = document.createElement('h2'); h2.className = 'section'; h2.textContent = section; main.appendChild(h2);
+    main.appendChild(el('h2', 'section', escapeHtml(section)));
     for (const s of list) main.appendChild(renderSeries(s));
   }
-  $('#save-all').disabled = state.dirty.size === 0;
+
+  // Holding folders
+  if (state.holding.length) {
+    main.appendChild(el('h2', 'section', 'Holding <small>removed and unplaced files · choose a series to place one</small>'));
+    const card = el('div', 'card');
+    const held = el('div', 'held');
+    for (const item of state.holding) held.appendChild(renderHeld(item));
+    card.appendChild(held); main.appendChild(card);
+  }
+
+  const dirty = state.dirty.size;
+  $('#status').textContent = dirty ? `${dirty} series with unsaved changes` : 'Everything saved';
+  $('#status').className = 'status' + (dirty ? ' dirty' : '');
+  $('#save-all').disabled = !dirty;
 }
 
 function renderSeries(s) {
-  const box = document.createElement('section'); box.className = 'series' + (state.dirty.has(s.slug) ? ' dirty' : '') + (s.error ? ' error' : '');
-  if (s.error) { box.innerHTML = `<div class="series-head"><span class="title">${s.slug}</span></div><div>${s.error}</div>`; return box; }
-  box.innerHTML = `<div class="series-head"><span class="title">${s.title}</span><span class="meta">${s.tone} · ${s.images.length} photographs${s.published ? '' : ' · unpublished'}</span><button class="save" ${state.dirty.has(s.slug) ? '' : 'disabled'}>Save</button></div>`;
-  $('.save', box).onclick = () => save(s);
-  const strip = document.createElement('div'); strip.className = 'strip';
-  s.images.forEach((f, i) => {
-    const p = document.createElement('div'); p.className = 'photo' + (s.featured.includes(f) ? ' featured' : ''); p.draggable = true; p.dataset.i = i;
-    p.innerHTML = `<img src="${img(s.slug, 'thumb', f)}" alt="">`
-      + (s.cover === f ? '<span class="badge">Cover</span>' : '')
-      + `<div class="tools"><button class="star ${s.featured.includes(f) ? 'on' : ''}" title="Landing slideshow">★</button><button class="focal" title="Focal point">⌖</button></div>`
-      + (s.captions[f] ? `<span class="caption">${s.captions[f]}</span>` : '');
-    p.onclick = (e) => { if (e.target.tagName === 'BUTTON') return; s.cover = f; markDirty(s); };
-    $('.star', p).onclick = () => { const k = s.featured.indexOf(f); if (k >= 0) s.featured.splice(k, 1); else s.featured.push(f); markDirty(s); };
-    $('.focal', p).onclick = () => openFocal(s, f);
-    // drag and drop within the series
-    p.addEventListener('dragstart', (e) => { strip._from = i; p.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-    p.addEventListener('dragend', () => p.classList.remove('dragging'));
-    p.addEventListener('dragover', (e) => { e.preventDefault(); p.classList.add('over'); });
-    p.addEventListener('dragleave', () => p.classList.remove('over'));
-    p.addEventListener('drop', (e) => {
-      e.preventDefault(); p.classList.remove('over');
-      const from = strip._from; if (from === undefined || from === i) return;
-      const [moved] = s.images.splice(from, 1); s.images.splice(i, 0, moved);
-      markDirty(s);
-    });
-    strip.appendChild(p);
-  });
-  box.appendChild(strip);
-  return box;
+  const card = el('section', 'card' + (state.dirty.has(s.slug) ? ' dirty' : '') + (s.error ? ' error' : ''));
+  if (s.error) { card.innerHTML = `<div class="card-head"><span class="title">${escapeHtml(s.slug)}</span></div><div>${escapeHtml(s.error)}</div>`; return card; }
+  const dirty = state.dirty.has(s.slug);
+  card.innerHTML = `<div class="card-head">
+      <span class="title">${escapeHtml(s.title)}</span>
+      <span class="meta">${s.tone} · ${s.images.length} photograph${s.images.length === 1 ? '' : 's'}${s.published ? '' : ' · unpublished'}</span>
+      <span class="actions">${dirty ? '<span class="unsaved">unsaved</span>' : ''}
+        <label><button class="quiet add-btn" type="button">Add photos</button><input type="file" accept="image/jpeg,.jpg,.jpeg" multiple></label>
+        <button class="save" ${dirty ? '' : 'disabled'}>Save</button></span>
+    </div>`;
+  const input = $('input[type=file]', card);
+  $('.add-btn', card).onclick = () => input.click();
+  input.onchange = () => uploadFiles(s, [...input.files]);
+  $('.save', card).onclick = () => save(s);
+
+  if (!s.images.length) { card.appendChild(el('p', 'empty', 'No photographs yet. Add some, or place one from Holding.')); return card; }
+  const strip = el('div', 'strip');
+  s.images.forEach((f, i) => strip.appendChild(renderPhoto(s, f, i, strip)));
+  card.appendChild(strip);
+  return card;
 }
 
-// ----------------------------------------------------------------------
-// Saving
-// ----------------------------------------------------------------------
+function renderPhoto(s, f, i, strip) {
+  const featured = s.featured.includes(f);
+  const p = el('div', 'photo'); p.draggable = true; p.tabIndex = 0; p.title = s.captions[f] ? `${f} — ${s.captions[f]}` : f;
+  p.innerHTML = `<img src="${imgUrl(s.slug, 'thumb', f)}" alt="">`
+    + (s.cover === f ? '<span class="badge">Cover</span>' : '')
+    + (featured ? '<span class="badge star">★</span>' : '')
+    + `<div class="tools">
+         <button class="cover ${s.cover === f ? 'on' : ''}" title="Use as the cover">◧</button>
+         <button class="star ${featured ? 'on' : ''}" title="${featured ? 'Remove from' : 'Add to'} the landing slideshow">★</button>
+         <button class="focal" title="Set the focal point">⌖</button>
+         <button class="more" title="Move or remove">⋯</button>
+       </div>
+       <div class="menu">
+         <div class="label" style="padding:4px 10px">Move to</div>
+         <select class="move-to"><option value="">Choose a series…</option>${state.series.filter((o) => !o.error && o.slug !== s.slug).map((o) => `<option value="${o.slug}">${escapeHtml(o.title)}${o.published ? '' : ' (unpublished)'}</option>`).join('')}</select>
+         <button class="danger remove">Remove from series</button>
+         <div class="confirm" hidden>Moves the file to content/_removed. <button class="yes">Remove</button><button class="no">Keep</button></div>
+       </div>`;
+  $('.cover', p).onclick = () => { s.cover = f; markDirty(s); };
+  $('.star', p).onclick = () => { const k = s.featured.indexOf(f); if (k >= 0) s.featured.splice(k, 1); else s.featured.push(f); markDirty(s); };
+  $('.focal', p).onclick = () => openFocal(s, f);
+  const menu = $('.menu', p);
+  $('.more', p).onclick = (e) => { e.stopPropagation(); closeMenus(); menu.classList.add('open'); p.classList.add('menu-open'); };
+  $('.move-to', p).onchange = async (e) => { if (e.target.value) await moveFile(s.slug, f, e.target.value); };
+  $('.remove', p).onclick = () => { $('.confirm', p).hidden = false; $('.remove', p).hidden = true; };
+  $('.confirm .no', p).onclick = () => { $('.confirm', p).hidden = true; $('.remove', p).hidden = false; };
+  $('.confirm .yes', p).onclick = () => moveFile(s.slug, f, '_removed');
 
+  // Keyboard: arrows move the photograph within the series
+  p.onkeydown = (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const j = i + (e.key === 'ArrowLeft' ? -1 : 1);
+    if (j < 0 || j >= s.images.length) return;
+    [s.images[i], s.images[j]] = [s.images[j], s.images[i]];
+    markDirty(s);
+    const moved = $('#main').querySelectorAll('.photo');   // refocus the moved photo
+    for (const q of moved) if (q.title.startsWith(f)) { q.focus(); break; }
+    e.preventDefault();
+  };
+  // Drag and drop with a before/after indicator
+  p.addEventListener('dragstart', (e) => { strip._from = i; p.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+  p.addEventListener('dragend', () => { p.classList.remove('dragging'); clearDrops(strip); });
+  p.addEventListener('dragover', (e) => {
+    e.preventDefault(); if (strip._from === undefined) return;
+    const r = p.getBoundingClientRect(); const after = e.clientX > r.left + r.width / 2;
+    p.classList.toggle('drop-before', !after); p.classList.toggle('drop-after', after);
+  });
+  p.addEventListener('dragleave', () => p.classList.remove('drop-before', 'drop-after'));
+  p.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const from = strip._from; if (from === undefined) return;
+    const after = p.classList.contains('drop-after');
+    clearDrops(strip);
+    let to = i + (after ? 1 : 0); if (from < to) to--;
+    if (from === to) return;
+    const [moved] = s.images.splice(from, 1); s.images.splice(to, 0, moved);
+    strip._from = undefined; markDirty(s);
+  });
+  return p;
+}
+function clearDrops(strip) { strip.querySelectorAll('.photo').forEach((q) => q.classList.remove('drop-before', 'drop-after')); }
+function closeMenus() { document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open')); document.querySelectorAll('.photo.menu-open').forEach((q) => q.classList.remove('menu-open')); }
+document.addEventListener('click', (e) => { if (!e.target.closest('.menu') && !e.target.closest('.more')) closeMenus(); });
+
+function renderHeld(item) {
+  const p = el('div', 'photo'); p.title = `${item.group}/${item.file}`;
+  p.innerHTML = `<img src="${heldUrl(item.group, 'thumb', item.file)}" alt=""><span class="badge">${escapeHtml(item.group.split('/')[1])}</span>
+    <div class="tools"><button class="place">Place in…</button><select class="move-to"><option value="">Place in…</option>${state.series.filter((o) => !o.error).map((o) => `<option value="${o.slug}">${escapeHtml(o.title)}</option>`).join('')}<option value="__delete">Delete permanently</option></select></div>`;
+  $('.move-to', p).onchange = async (e) => {
+    const v = e.target.value; if (!v) return;
+    try {
+      if (v === '__delete') { if (!p.dataset.armed) { p.dataset.armed = '1'; toast('Choose "Delete permanently" again to confirm', true, 4000); e.target.value = ''; return; } await api('/_curate/delete', { holding: item.group, file: item.file }); toast(`Deleted ${item.file}`); }
+      else { const out = await api('/_curate/move', { from: item.group, file: item.file, to: v }); toast(`Placed ${out.moved} in ${bySlug(v).title}`); }
+      await load();
+    } catch (err) { toast(err.message, true, 5000); }
+  };
+  return p;
+}
+
+// ============================================================================
+// Saving, uploading, moving
+// ============================================================================
 async function save(s) {
-  const r = await fetch('/_curate/save', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ slug: s.slug, images: s.images, cover: s.cover, featured: s.featured, focal: s.focal }) });
-  const out = await r.json();
-  if (!r.ok) { toast('Not saved: ' + out.error, 5000); return; }
-  state.dirty.delete(s.slug); toast(`Saved ${s.title}`); render();
+  try {
+    await api('/_curate/save', { slug: s.slug, images: s.images, cover: s.cover, featured: s.featured, focal: s.focal });
+    state.dirty.delete(s.slug); toast(`Saved ${s.title}`); render();
+  } catch (err) { toast('Not saved: ' + err.message, true, 6000); }
 }
 $('#save-all').onclick = async () => { for (const s of state.series) if (state.dirty.has(s.slug)) await save(s); };
 window.addEventListener('beforeunload', (e) => { if (state.dirty.size) { e.preventDefault(); e.returnValue = ''; } });
 
-// ----------------------------------------------------------------------
-// Focal point overlay
-// ----------------------------------------------------------------------
+async function uploadFiles(s, files) {
+  if (!files.length) return;
+  if (state.dirty.has(s.slug)) { toast('Save this series first, then add photos', true, 4000); return; }
+  let added = 0;
+  for (const file of files) {
+    toast(`Uploading ${file.name} (${added + 1} of ${files.length})…`, false, 60000);
+    const r = await fetch(`/_curate/upload?slug=${enc(s.slug)}`, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'X-Filename': enc(file.name) }, body: file });
+    const out = await r.json();
+    if (!r.ok) { toast(`${file.name}: ${out.error}`, true, 6000); continue; }
+    added++;
+  }
+  await load();
+  toast(`Added ${added} photograph${added === 1 ? '' : 's'} to ${s.title}`);
+}
 
-let focal = null;   // { s, f, value, original }
+async function moveFile(fromSlug, file, to) {
+  const s = bySlug(fromSlug);
+  if (state.dirty.has(fromSlug)) { toast('Save this series first', true, 4000); return; }
+  try {
+    const out = await api('/_curate/move', { from: fromSlug, file, to });
+    toast(to === '_removed' ? `Removed ${file} (kept in content/_removed)` : `Moved ${out.moved} to ${bySlug(to).title}`);
+    await load();
+  } catch (err) { toast(err.message, true, 5000); }
+}
+
+// ============================================================================
+// New series
+// ============================================================================
+$('#new-series').onclick = () => {
+  $('#series-section').innerHTML = state.sections.map((x) => `<option>${x}</option>`).join('');
+  $('#series-tone').innerHTML = state.tones.map((x) => `<option>${x}</option>`).join('');
+  $('#series-overlay').classList.add('open'); $('#series-form input[name=title]').focus();
+};
+$('#series-cancel').onclick = () => $('#series-overlay').classList.remove('open');
+$('#series-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.target);
+  try {
+    const out = await api('/_curate/series', { title: form.get('title'), section: form.get('section'), tone: form.get('tone'), order: form.get('order') });
+    $('#series-overlay').classList.remove('open'); e.target.reset();
+    toast(`Created ${out.created}`); await load();
+  } catch (err) { toast(err.message, true, 5000); }
+};
+
+// ============================================================================
+// Focal point tool
+// ============================================================================
+let focal = null;   // { s, f, x, y, original }
+const stage = $('#stage'), stageImg = $('#stage-img'), dot = $('#dot');
+
 function openFocal(s, f) {
-  focal = { s, f, value: s.focal[f] || '50% 50%', original: s.focal[f] };
-  $('#stage-img').src = img(s.slug, 'medium', f);
-  $('#prev-wide-img').src = $('#prev-tall-img').src = $('#stage-img').src;
+  const [x, y] = (s.focal[f] || '50% 50%').split(' ').map(parseFloat);
+  focal = { s, f, x, y, original: s.focal[f] || null };
+  stageImg.onload = layoutFocal;
+  stageImg.src = imgUrl(s.slug, 'medium', f);
   $('#focal-title').textContent = s.title; $('#focal-file').textContent = f;
-  applyFocal(); $('#overlay').classList.add('open');
+  $('#focal-overlay').classList.add('open');
+  if (stageImg.complete) layoutFocal();
 }
-function applyFocal() {
-  const [x, y] = focal.value.split(' ');
-  $('#dot').style.left = x; $('#dot').style.top = y;
-  $('#prev-wide-img').style.objectPosition = $('#prev-tall-img').style.objectPosition = focal.value;
-  $('#focal-value').textContent = focal.value;
+function layoutFocal() {
+  if (!focal) return;
+  const w = stageImg.clientWidth, h = stageImg.clientHeight;
+  dot.style.left = focal.x + '%'; dot.style.top = focal.y + '%';
+  $('#focal-value').textContent = `${focal.x}% ${focal.y}%`;
+  // Where object-fit: cover with this object-position lands the crop window
+  for (const [id, ar] of [['#crop-wide', 16 / 9], ['#crop-tall', 9 / 16]]) {
+    const box = $(id);
+    let cw, ch, left, top;
+    if (w / h > ar) { ch = h; cw = h * ar; left = (w - cw) * focal.x / 100; top = 0; }
+    else { cw = w; ch = w / ar; left = 0; top = (h - ch) * focal.y / 100; }
+    Object.assign(box.style, { left: left + 'px', top: top + 'px', width: cw + 'px', height: ch + 'px' });
+  }
 }
-$('#stage').onclick = (e) => {
-  const r = $('#stage-img').getBoundingClientRect();
-  const x = Math.round(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * 100);
-  const y = Math.round(Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1) * 100);
-  focal.value = `${x}% ${y}%`; applyFocal();
-};
-$('#focal-reset').onclick = () => { focal.value = '50% 50%'; applyFocal(); };
+function setFocalFromEvent(e) {
+  const r = stageImg.getBoundingClientRect();
+  focal.x = Math.round(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * 100);
+  focal.y = Math.round(Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1) * 100);
+  layoutFocal();
+}
+let dragging = false;
+stage.addEventListener('pointerdown', (e) => { if (!focal) return; dragging = true; stage.setPointerCapture(e.pointerId); setFocalFromEvent(e); });
+stage.addEventListener('pointermove', (e) => { if (dragging) setFocalFromEvent(e); });
+stage.addEventListener('pointerup', () => (dragging = false));
+window.addEventListener('resize', layoutFocal);
+$('#show-wide').onclick = () => { $('#crop-wide').classList.add('on'); $('#crop-tall').classList.remove('on'); $('#show-wide').classList.add('on'); $('#show-tall').classList.remove('on'); };
+$('#show-tall').onclick = () => { $('#crop-tall').classList.add('on'); $('#crop-wide').classList.remove('on'); $('#show-tall').classList.add('on'); $('#show-wide').classList.remove('on'); };
+$('#focal-reset').onclick = () => { focal.x = 50; focal.y = 50; layoutFocal(); };
+function closeFocal() { $('#focal-overlay').classList.remove('open'); focal = null; }
 $('#focal-done').onclick = () => {
-  if (focal.value === '50% 50%') delete focal.s.focal[focal.f]; else focal.s.focal[focal.f] = focal.value;
-  if ((focal.original || '50% 50%') !== focal.value) markDirty(focal.s);
-  $('#overlay').classList.remove('open'); focal = null;
+  const value = `${focal.x}% ${focal.y}%`;
+  if (value === '50% 50%') delete focal.s.focal[focal.f]; else focal.s.focal[focal.f] = value;
+  if ((focal.original || '50% 50%') !== value) markDirty(focal.s);
+  closeFocal();
 };
-$('#focal-cancel').onclick = () => { $('#overlay').classList.remove('open'); focal = null; };
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && focal) $('#focal-cancel').onclick(); });
+$('#focal-cancel').onclick = closeFocal;
+document.addEventListener('keydown', (e) => {
+  if (!focal) { if (e.key === 'Escape') $('#series-overlay').classList.remove('open'); return; }
+  const step = e.shiftKey ? 5 : 1;
+  if (e.key === 'Escape') closeFocal();
+  else if (e.key === 'Enter') $('#focal-done').onclick();
+  else if (e.key === 'ArrowLeft') { focal.x = Math.max(0, focal.x - step); layoutFocal(); }
+  else if (e.key === 'ArrowRight') { focal.x = Math.min(100, focal.x + step); layoutFocal(); }
+  else if (e.key === 'ArrowUp') { focal.y = Math.max(0, focal.y - step); layoutFocal(); }
+  else if (e.key === 'ArrowDown') { focal.y = Math.min(100, focal.y + step); layoutFocal(); }
+  else return;
+  e.preventDefault();
+});
 
 load();
 </script>

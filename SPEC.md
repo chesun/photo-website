@@ -141,6 +141,7 @@ Rules the build enforces:
 
 - `images` is the display order. The curate page edits it; hand-editing is fine too.
 - An image file in the folder that is not listed in `images` is appended to the end with a warning, so a fresh Lightroom export shows up without editing YAML.
+- An unpublished series may be empty (the curate page creates them that way); a published one needs at least one image.
 - An image listed in `images` that is missing from the folder fails the build with a message naming the series and file.
 - `cover` must be in `images`. `featured` entries must be in `images`.
 - `section` must be one of the four. `tone` and `layout` must be one of their allowed values. Any other key is an error, so typos surface.
@@ -172,18 +173,15 @@ Run once, before the Squarespace subscription is cancelled. After that the Squar
 
 ## Curate page (local only)
 
-Served by `--serve` at `/_curate/`, never written to `dist/`. Modeled on `bin/curate.py` in the `chesun.github.io` repo: a stdlib `http.server` page that shows every series' thumbnails, lets you drag to reorder, and writes the order back on Save.
+Served by `--serve` at `/_curate/`, never written to `dist/`. Set in the site's own type and palette. It replaces the one thing Squarespace did well, arranging photos by eye, and the ordinary content chores around it.
 
-What it does:
-
-- One strip per series, grouped by section, published or not, thumbnails about 150px tall, captions shown on the thumbnail.
-- Drag to reorder; click a thumbnail to set it as `cover`; star it to add or remove it from `featured`; a focal-point tool that shows the frame large, takes a click to place the anchor, and previews the resulting crop at 16:9 and 9:16.
-- A strip at the top showing the landing slideshow in the order it will run (section, series order, featured order), each slide cropped to 16:9 at its focal point; clicking one opens the focal tool. This is where the "review by eye" pass happens.
-- Save writes `images`, `cover`, `featured`, and `focal` into that `series.yaml` by replacing those blocks in the text, so every other key and comment survives. The server re-validates what it wrote; a bad save (a cover that is not in the series, an image list that no longer matches the folder, a malformed focal point) is refused with a message and nothing is written. The dev server's watcher then rebuilds the site.
-- Thumbnails and medium copies come from the image cache through a `/_curate/img/` route, so unpublished series show without a build.
-- No dependencies beyond the standard library and PyYAML.
-
-This replaces the one thing Squarespace did well: arranging photos by eye.
+- One card per series, grouped by section, published or not, thumbnails about 136px tall. Drag to reorder with a before/after drop indicator; arrow keys move a focused photograph.
+- Per photograph: cover, feature (landing slideshow), focal point, and a menu to move it to another series or remove it. Captions and focal points travel with a moved photograph. Removed photographs go to `content/_removed/<series>/`, never straight to deletion.
+- Focal-point tool: the frame large, a draggable ring for the anchor, the desktop (16:9) or phone (9:16) crop window drawn on the photograph itself, arrow-key nudging, Enter to accept.
+- Landing strip at the top: the slideshow in running order (section, series order, featured order), each slide cropped at its focal point; click to adjust. This is where the review-by-eye pass happens.
+- Add photos: JPEG upload into a series folder, appended to the order, non-JPEGs refused, name collisions suffixed. Holding section: files under `content/_removed/` and `content/_unplaced/`, to place into a series or delete permanently (with confirmation). New series: title, section, tone, order; creates an empty, unpublished `series.yaml`.
+- Save writes `images`, `cover`, `featured`, and `focal` by replacing those blocks in the YAML text, so every other key and comment survives; the server re-validates and refuses a bad save. The dev server's watcher then rebuilds.
+- Thumbnails and medium copies come from the image cache through a `/_curate/img/` route. No dependencies beyond the standard library, Pillow, and PyYAML.
 
 ## Design system
 
