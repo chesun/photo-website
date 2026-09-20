@@ -7,9 +7,8 @@ tone: color
 layout: column
 published: false
 statement: ''
-cover: 725A9655-Edit.jpg
+cover: ''
 featured: []
-images:
-- 725A9655-Edit.jpg
-- 725A9614.jpg
+images: []
 captions: {}
+focal: {}
