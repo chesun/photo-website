@@ -251,7 +251,7 @@ Build in four phases. Each phase ends with a full build, `--serve`, screenshots 
 1. **Content and series pages.** Content model, `migrate_squarespace.py` run against the live site, image pipeline with variants, EXIF stripping, hash cache, aspect-ratio boxes and average color, series pages in column layout, lightbox, header and footer, `--serve`. Verified with the real migrated content, not placeholders.
 2. **Site chrome.** Landing slideshow with scrim and reduced-motion fallback, section indexes, Archive index, About, 404, sitemap and OpenGraph tags, favicons, motion, mobile menu. Grid layout implemented and tested on one series, then switched back to column.
 3. **Curate page.** Reorder, cover, featured, focal points, landing preview, save. Verified by reordering a series through the running server and checking the rebuilt page.
-4. **Deploy.** GitHub Actions workflow, `CNAME`, README deploy steps, DNS instructions for a domain registered at Squarespace, Lighthouse run on a series page.
+4. **Deploy.** GitHub Actions workflow (`.github/workflows/deploy.yml`: build on push to `main`, cached image variants, publish `dist/` to GitHub Pages), `CNAME` and `.nojekyll` written by the build, README deploy steps, DNS instructions for a domain registered at Squarespace. Lighthouse was run during the review pass (mobile series page 85 performance, 100 accessibility, best practices, and SEO).
 
 ## README
 

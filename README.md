@@ -115,4 +115,32 @@ The two typefaces, Inter and Newsreader, are self-hosted from `static/fonts/` as
 
 ## Deploying
 
-Phase 4, not written yet. See `SPEC.md`.
+The site lives at https://github.com/chesun/photo-website and is published by GitHub Pages. Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site exactly as `scripts/build.py` does locally and publishes `dist/`. Image variants are cached between runs, so a text-only change deploys in about a minute; a change to photographs takes a couple of minutes longer.
+
+So the publishing routine is: arrange things in the curate page or edit the YAML, look at the local preview, then
+
+```
+git add -A
+git commit -m "Add the Lost Coast series"
+git push
+```
+
+The Actions tab on GitHub shows the run. Nothing else is needed.
+
+### Pointing christinasunphoto.com at GitHub Pages
+
+The domain is registered at Squarespace, which also runs its DNS. GitHub Pages already knows the domain (the build writes a `CNAME` file and the repository's Pages settings name it), so the only step is to change the DNS records at Squarespace once you are ready to switch. Until then visitors keep seeing the Squarespace site.
+
+In Squarespace: Settings, Domains, christinasunphoto.com, DNS settings. Remove the Squarespace records for the domain and add:
+
+| Type | Host | Value |
+|---|---|---|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | chesun.github.io |
+
+Within an hour or so GitHub's Pages settings for the repository will show the domain as verified and will issue an HTTPS certificate; then tick **Enforce HTTPS** there. Keep the domain itself registered at Squarespace (a domain-only plan) or transfer it later; either is fine.
+
+After the switch, cancel the Squarespace site subscription. Everything from it is already in this repository, including the eight images in `content/_unplaced/`.

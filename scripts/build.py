@@ -111,6 +111,10 @@ def build():
     shutil.copytree(STATIC, DIST / "static", dirs_exist_ok=True)
     shutil.copyfile(STATIC / "favicon.ico", DIST / "favicon.ico")
     write_sitemap(site_content.site.base_url, pages)
+    # GitHub Pages: CNAME names the custom domain; .nojekyll skips Jekyll.
+    host = site_content.site.base_url.split("://", 1)[-1].strip("/")
+    (DIST / "CNAME").write_text(host + "\n")
+    (DIST / ".nojekyll").write_text("")
     (DIST / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {site_content.site.base_url}/sitemap.xml\n")
 
     elapsed = time.perf_counter() - started
