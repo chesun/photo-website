@@ -100,6 +100,7 @@ def series_data(content_dir):
             for f in sorted(p for p in group.iterdir() if p.suffix.lower() in content_lib.IMAGE_SUFFIXES):
                 holding.append({"group": f"{name}/{group.name}", "file": f.name})
     return {"sections": [item["slug"] for item in site.nav if item["slug"] != "about"],
+            "labels": {item["slug"]: item["label"] for item in site.nav},
             "tones": list(content_lib.TONES), "series": result, "holding": holding}
 
 
