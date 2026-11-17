@@ -294,39 +294,38 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 
 .page-landing .site-main { padding: 0; }
 .page-landing .site-footer { display: none; }
-/* The landing page is one screen that does not scroll. Dark behind it, so
-   nothing pale can show past an edge, and no rubber-band bounce. */
+/* Dark behind the show, so nothing pale can show past an edge, and no
+   rubber-band bounce. The page scrolls if its words need more room than the
+   screen has, as on a phone turned sideways. */
 html:has(.page-landing), .page-landing {
   background: var(--dark);
-  overflow: hidden;
   overscroll-behavior: none;
 }
 .page-landing { min-height: 0; }
 
-/* Pinned to the screen, so there is nothing to scroll. The photographs fill
-   the large viewport; the words are centred in the small viewport (toolbars
-   shown), the part that is always visible. */
+/* The photographs fill the large viewport (toolbars hidden) plus two bleeds,
+   and grow with the words if those need more room. On a computer the bleeds
+   are zero and the show is exactly one screen. */
 .hero {
-  --hero-bleed: 0px;
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 100vh; height: calc(100lvh + var(--hero-bleed));
+  --bleed-top: 0px;
+  --bleed-bottom: 0px;
+  position: relative;
+  min-height: 100vh;
+  min-height: calc(100lvh + var(--bleed-top) + var(--bleed-bottom));
   background: var(--dark);
   overflow: hidden;
 }
-/* Touch screens. Safari on iOS 26 clips anything position: fixed to the
-   strip between the clock and its floating toolbar; only content in the
-   page itself runs on behind the toolbar. So here the show is part of the
-   page, a little taller than the screen so it reaches under the toolbar,
-   and swiping on it is switched off instead of the page being locked.
-   Behind the clock Safari shows the page colour while the page is at the
-   top, so that band stays dark. */
+/* Phones. Safari on iOS 26 draws the page behind its floating toolbar, but
+   behind the clock only once the page has scrolled away from the very top;
+   at the top it paints a flat colour there. So the show starts a clock-bar's
+   height above where the words begin, and the page opens scrolled down by
+   that much (the script at the end of landing.html), which puts the
+   photograph behind the clock. The bottom bleed lets it run on under the
+   toolbar. */
 @media (hover: none) and (pointer: coarse) {
-  html:has(.page-landing), .page-landing { overflow: visible; }
   .hero {
-    --hero-bleed: 120px;
-    position: absolute;
-    touch-action: none;
+    --bleed-top: env(safe-area-inset-top, 0px);
+    --bleed-bottom: 120px;
   }
 }
 .hero-slides { position: absolute; inset: 0; }
@@ -350,14 +349,18 @@ html:has(.page-landing), .page-landing {
 /* the first slide: visible at once, at its starting scale until painted */
 .hero-slide.is-entering { transform: scale(1); transition: none; }
 
+/* The words fill the small viewport (toolbars shown), the part that is always
+   visible, and grow if they need more. The wordmark-to-links group is
+   centred in the space above the contact line, which sits at the bottom. */
 .hero-copy {
-  position: absolute; inset: 0 0 auto;
-  height: 100vh; height: 100svh;
+  position: relative;
+  margin-top: var(--bleed-top);
+  min-height: 100vh; min-height: 100svh;
   padding-top: max(var(--s6), env(safe-area-inset-top));
   padding-bottom: max(var(--s6), env(safe-area-inset-bottom));
   padding-left: max(var(--gutter), env(safe-area-inset-left));
   padding-right: max(var(--gutter), env(safe-area-inset-right));
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center;
   text-align: center; color: #fff;
   /* the scrim: a soft radial gradient behind the text only, never the whole frame */
   background: radial-gradient(ellipse 64% 58% at 50% 50%, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.13) 55%, rgba(0, 0, 0, 0) 100%);
@@ -371,7 +374,7 @@ html:has(.page-landing), .page-landing {
   text-indent: 0.38em;        /* balance the trailing letterspace */
   text-transform: uppercase;
   line-height: 1;
-  margin: 0;
+  margin: auto 0 0;
 }
 .hero-tagline {
   font-family: var(--serif);
@@ -384,7 +387,7 @@ html:has(.page-landing), .page-landing {
   margin: var(--s3) auto 0;
   color: rgba(255, 255, 255, 0.92);
 }
-.hero-nav { margin-top: var(--s6); }
+.hero-nav { margin: var(--s6) 0 auto; }
 .hero-nav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s1) var(--s5); }
 .hero-nav a {
   display: inline-block; padding: var(--s2) 0;       /* 44px touch target */
@@ -399,21 +402,19 @@ html:has(.page-landing), .page-landing {
   .hero-nav ul { flex-direction: column; align-items: center; gap: 0; }
   .hero-nav a { padding: 12px 0; }
 }
-/* A phone turned sideways: the landing page does not scroll, so everything
-   has to fit in about 320px of height. Wider tagline, one row of links. */
+/* A phone turned sideways has about 320px of height. A wider tagline and one
+   row of links keep everything on one screen where they fit. */
 @media (max-height: 480px) and (min-width: 601px) {
   .hero-tagline { max-width: 52ch; margin-top: var(--s2); font-size: 1.0625rem; }
   .hero-nav { margin-top: var(--s3); }
+  .hero-foot { margin-top: var(--s2); }
   .hero-nav ul { gap: 0 clamp(var(--s2), 3vw, var(--s4)); flex-wrap: nowrap; }
   .hero-nav a { letter-spacing: 0.18em; text-indent: 0.18em; }
 }
 
 .hero-foot {
-  position: absolute; left: 0; right: 0;
-  /* the bottom of the small viewport: above Safari's toolbar, not under it */
-  bottom: calc(var(--s3) + env(safe-area-inset-bottom, 0px));
-  bottom: calc(100lvh - 100svh + var(--hero-bleed, 0px) + var(--s3) + env(safe-area-inset-bottom, 0px));
-  margin: 0;
+  margin: var(--s4) 0 calc(var(--s3) - var(--s6));   /* sits nearer the bottom than the padding would */
+  text-shadow: none;
   display: flex; justify-content: center; gap: var(--s3);
   font-size: var(--fs-caption); letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.7);

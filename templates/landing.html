@@ -73,10 +73,25 @@
         {% endfor %}
       </ul>
     </nav>
+    <p class="hero-foot">
+      <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>
+      <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+    </p>
   </div>
-  <p class="hero-foot">
-    <a href="{{ site.instagram }}" rel="me noopener" target="_blank">Instagram</a>
-    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
-  </p>
+  {# Phones: open scrolled down by the clock bar's height, so Safari draws the
+     photograph behind the clock instead of a flat colour (see .hero in
+     site.css). The offset is the words' top margin, which is zero on a
+     computer and on a phone turned sideways. #}
+  <script>
+    (function () {
+      var bleed = parseFloat(getComputedStyle(document.querySelector(".hero-copy")).marginTop) || 0;
+      if (!bleed) return;
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      function settle() { if (window.scrollY < bleed) window.scrollTo(0, bleed); }
+      settle();
+      window.addEventListener("load", settle, { once: true });
+      window.addEventListener("pageshow", function (e) { if (e.persisted) settle(); });
+    })();
+  </script>
 </section>
 {% endblock %}
