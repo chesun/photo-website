@@ -1,8 +1,8 @@
 # Series metadata. `images` is the display order; edit it here or
 # with the curate page (python scripts/build.py --serve, then /_curate/).
 title: Meditation on Solitude
-section: archive
-order: 10
+section: interludes
+order: 20
 tone: color
 layout: column
 published: true

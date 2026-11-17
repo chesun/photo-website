@@ -42,7 +42,7 @@ content/
     portrait.jpg
 ```
 
-A *series* is a titled, sequenced body of work. It belongs to one of four sections: `landscape`, `people`, `interludes`, or `archive`. The folder name is the URL slug, so `content/series/sand-and-stone/` becomes `/landscape/sand-and-stone/`.
+A *series* is a titled, sequenced body of work. It belongs to one of five sections: `landscape`, `people`, `journeys`, `interludes`, or `archive`. Journeys holds one trip per series; Interludes holds personal projects followed over time. The folder name is the URL slug, so `content/series/sand-and-stone/` becomes `/landscape/sand-and-stone/`.
 
 ## Adding a series
 
@@ -52,7 +52,7 @@ A *series* is a titled, sequenced body of work. It belongs to one of four sectio
 
 ```yaml
 title: Sand and Stone
-section: landscape        # landscape | people | interludes | archive
+section: landscape        # landscape | people | journeys | interludes | archive
 order: 30                 # position within the section index; lower first
 tone: monochrome          # color | monochrome
 layout: column            # column (default) | grid
@@ -93,7 +93,7 @@ Nothing of the page goes into `dist/`. You can always edit the YAML by hand inst
 
 ## The landing slideshow
 
-The landing page cycles through every image listed under `featured` in any published series, in section order (Landscape, People, Interludes, Archive) and then series order. Each visit starts at a random slide and runs on from there. To change the set, star (★) or unstar photographs in the curate page, or add or remove filenames under `featured` by hand; the strip at the top of the curate page shows the whole set in running order. The starting slide is preloaded; the rest load one ahead as the show runs.
+The landing page cycles through every image listed under `featured` in any published series, in section order (Landscape, People, Journeys, Interludes, Archive) and then series order. Each visit starts at a random slide and runs on from there. To change the set, star (★) or unstar photographs in the curate page, or add or remove filenames under `featured` by hand; the strip at the top of the curate page shows the whole set in running order. The starting slide is preloaded; the rest load one ahead as the show runs.
 
 ## Column or grid
 

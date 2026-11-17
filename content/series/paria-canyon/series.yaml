@@ -1,0 +1,41 @@
+# Series metadata. `images` is the display order; edit it here or
+# with the curate page (python scripts/build.py --serve, then /_curate/).
+title: Paria Canyon
+section: journeys
+order: 10
+tone: color
+layout: column
+published: true
+statement: ''
+cover: paria-canyon-march-2026-001.jpg
+featured: []
+images:
+- paria-canyon-march-2026-001.jpg
+- paria-canyon-march-2026-002.jpg
+- paria-canyon-march-2026-005.jpg
+- paria-canyon-march-2026-007.jpg
+- paria-canyon-march-2026-009.jpg
+- paria-canyon-march-2026-010.jpg
+- paria-canyon-march-2026-011.jpg
+- paria-canyon-march-2026-012.jpg
+- paria-canyon-march-2026-014.jpg
+- paria-canyon-march-2026-016.jpg
+- paria-canyon-march-2026-017.jpg
+- paria-canyon-march-2026-018.jpg
+- paria-canyon-march-2026-019.jpg
+- paria-canyon-march-2026-020.jpg
+- paria-canyon-march-2026-022.jpg
+- paria-canyon-march-2026-023.jpg
+- paria-canyon-march-2026-024.jpg
+- paria-canyon-march-2026-025.jpg
+- paria-canyon-march-2026-026.jpg
+- paria-canyon-march-2026-028.jpg
+- paria-canyon-march-2026-030.jpg
+- paria-canyon-march-2026-031.jpg
+- paria-canyon-march-2026-032.jpg
+- paria-canyon-march-2026-033.jpg
+- paria-canyon-march-2026-034.jpg
+- paria-canyon-march-2026-035.jpg
+- paria-canyon-march-2026-038.jpg
+captions: {}
+focal: {}

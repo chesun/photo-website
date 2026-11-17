@@ -2,7 +2,7 @@
 # with the curate page (python scripts/build.py --serve, then /_curate/).
 title: Quiet Days
 section: interludes
-order: 10
+order: 40
 tone: color
 layout: column
 published: true

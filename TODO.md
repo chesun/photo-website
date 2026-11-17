@@ -4,7 +4,7 @@ Open questions and future work for the photography site. Decisions, once made, m
 
 ## Before building
 
-- [ ] **Do not cancel Squarespace until the migration script has run and the new site has been checked page by page.** The CDN images disappear with the subscription, and for some galleries the edited web exports and their order exist only there.
+- [x] **Do not cancel Squarespace until the migration script has run and the new site has been checked page by page.** The CDN images disappear with the subscription, and for some galleries the edited web exports and their order exist only there. Christina cancelled the website subscription on 2026-11-17; the domain stays registered at Squarespace.
 
 ## Open questions
 
@@ -17,10 +17,12 @@ Open questions and future work for the photography site. Decisions, once made, m
 - [ ] **Revisit every gallery for consolidation into thematic series.** Now that series are thematic, some existing galleries are redundant or mis-filed. Known candidates:
   - *The Mountains are Calling* (2020 Eastern Sierra color film, 6 frames) likely merges into the 2019 color series; its opening frame was already there.
   - The dune abstract and the cliff-in-cloud frame in the 2019 color series are closer to the current abstract aesthetic than to the rest of that set. Decide whether they stay or seed a new series with the 2024 to 2026 sandstone work.
-  - *Nightfall*, *Outskirts*, and *Meditation on Solitude* are thematic series about human-altered landscapes and might belong in Landscape or Interludes rather than Archive.
   - *Panoramic Streets: Color* (6) and *Animal Companions* (2) and *The City by the Sea* (3) are too small to stand alone. Merge, or accept as archive stubs.
   - The three orphaned galleries (Streets of Davis, Life and Adventure, Adventure) are migrated as unpublished. Decide keep, merge, or delete.
-- [ ] **Which personal frames go into Interludes.** Beach days (2022-01, 2022-09), friends on the Lost Coast, life snaps from 2023, JMT frames with people in them. Needs a pass through the library.
+- [ ] **Sort the personal frames between Journeys and Interludes.** Trips go to Journeys (friends on the Lost Coast, JMT frames with people in them); beach days (2022-01, 2022-09) and life snaps from 2023 may suit Quiet Days in Interludes. Needs a pass through the library.
+- [ ] **Shape the Paria Canyon journey.** All 30 edited 35mm exports from `Dropbox/Photography/Photos/2026/2026-03-22_paria-canyon/35mm/exports/` are in, at 2500px, in roll order. Choose and sequence them in the curate page, pick a cover (it defaults to the first frame), and write a statement. Decide whether the four 120 monochrome frames from the same trip (`120/scans/`) join it.
+- [ ] **How Journeys entries are titled.** A plain place-and-date (*Paria Canyon, March 2026*) or a title like the thematic series. *Paria Canyon* is a working title.
+- [ ] **Split Sand and Stone.** Its statement describes one trip (Eastern Sierra and Death Valley, January 2024). Christina picks the frames that are a record of the trip rather than a statement; those become an Eastern Sierra and Death Valley entry in Journeys, and the rest stays in Landscape or joins the sandstone work.
 
 ## After launch
 
@@ -28,13 +30,13 @@ Open questions and future work for the photography site. Decisions, once made, m
 - [ ] **WebP variants.** The build could emit WebP beside the JPEGs (Pillow can) for roughly a third less weight per series page; the review estimated 500KB or more saved on a nine-image page.
 - [ ] **iOS scroll lock behind the open mobile menu.** `overflow: hidden` on the body is not honoured by iOS Safari; a fixed-body lock would be.
 
-- [ ] **Edit the 2024 to 2026 film scans in Lightroom and sequence them into new Landscape series.** Roughly 180 unedited scans: Sequoia and Kings Canyon (35mm mono), Great Basin and Zion (120 color, 35mm panoramic), Utah (120 color, 35mm panoramic), Grand Canyon (120 mono), Paria Canyon (120 mono), Lost Coast (120 color). The 6x6 sandstone work across Zion, Bryce, Utah, and Paria looks like one series. Grand Canyon and Paria in monochrome either join Sand and Stone or become its sequel. Lost Coast is its own thing and has people in it.
+- [ ] **Edit the 2024 to 2026 film scans in Lightroom and sequence them into new Landscape series.** Roughly 180 unedited scans: Sequoia and Kings Canyon (35mm mono), Great Basin and Zion (120 color, 35mm panoramic), Utah (120 color, 35mm panoramic), Grand Canyon (120 mono), Lost Coast (120 color). The 6x6 sandstone work across Zion, Bryce, Utah, and Paria looks like one series. Grand Canyon in monochrome either joins Sand and Stone or becomes its sequel. Lost Coast is its own thing and has people in it.
 - [ ] **Replace CDN copies with Lightroom re-exports** where a better master exists. Same filename, new hash, nothing else changes.
-- [ ] **Add the film pieces that are not on either site yet** from trips already shot: Zion, Bryce, Great Basin, Paria Canyon, and others.
+- [ ] **Add the film pieces that are not on either site yet** from trips already shot: Zion, Bryce, Great Basin, and others.
 
 ## Maybe later
 
-- [ ] Port the iPhone trip journals from christinasun.net into Interludes as clearly casual entries, or leave them where they are.
+- [ ] Port the iPhone trip journals from christinasun.net into Journeys as clearly casual entries, or leave them where they are.
 - [ ] Journal text for JMT 2025, the Tahoe Rim Trail, and JMT 2026 from the trail notebooks.
 - [ ] Transfer the domain from Squarespace to GoDaddy, where christinasun.net already lives.
 - [ ] Redirect stubs for old Squarespace URLs, if any turn out to be linked from somewhere that matters.

@@ -1,7 +1,7 @@
 # Series metadata. `images` is the display order; edit it here or
 # with the curate page (python scripts/build.py --serve, then /_curate/).
 title: Outskirts
-section: archive
+section: interludes
 order: 30
 tone: color
 layout: column

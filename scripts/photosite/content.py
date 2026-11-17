@@ -22,7 +22,7 @@ from pathlib import Path
 
 import yaml
 
-SECTIONS = ("landscape", "people", "interludes", "archive")
+SECTIONS = ("landscape", "people", "journeys", "interludes", "archive")
 TONES = ("color", "monochrome")
 LAYOUTS = ("column", "grid")
 IMAGE_SUFFIXES = (".jpg", ".jpeg")

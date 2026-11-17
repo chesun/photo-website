@@ -17,6 +17,8 @@ nav:
     label: Landscape
   - slug: people
     label: People
+  - slug: journeys
+    label: Journeys
   - slug: interludes
     label: Interludes
   - slug: archive

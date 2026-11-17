@@ -10,13 +10,14 @@ The quality bar: this must look like a site made by a professional design studio
 
 ## Site structure
 
-Navigation contains exactly five items, in this order:
+Navigation contains exactly six items, in this order:
 
 1. **Landscape** — landscape series, currently film and 2019 digital.
 2. **People** — commissioned portrait, couple, and graduation work.
-3. **Interludes** — personal film that is neither commissioned nor landscape: beach days, friends, quiet rolls.
-4. **Archive** — older street and personal-project work, reached only through one quiet index page.
-5. **About** — portrait, bio, exhibitions, contact.
+3. **Journeys** — one trip per series, sequenced as it happened. People in the frame and imperfect light belong here; the trip is what holds the series together.
+4. **Interludes** — personal projects close to home, followed over time: night, solitude, the edges of town, quiet days.
+5. **Archive** — earlier work that is kept but no longer being developed, reached only through one quiet index page.
+6. **About** — portrait, bio, exhibitions, contact.
 
 The landing page is a full-viewport crossfading slideshow with the wordmark and tagline over it. It is the site's thesis.
 
@@ -24,7 +25,7 @@ Section names come from the tagline: nature, people, and everything in between.
 
 ### The series is the content unit
 
-Every gallery on the site is a *series*: a titled, sequenced body of work with one coherent aesthetic, a short statement, a cover, and a tone (color or monochrome). Series are never grouped by trip, camera format, or year. Color versus monochrome is a tag on the series, never a level in the hierarchy. A section index page is a grid of series covers, so no single page ever mixes eras or palettes.
+Every gallery on the site is a *series*: a titled, sequenced body of work with one coherent aesthetic, a short statement, a cover, and a tone (color or monochrome). Series are never grouped by trip, camera format, or year, except in Journeys, where the trip is the series. Color versus monochrome is a tag on the series, never a level in the hierarchy. A section index page is a grid of series covers, so no single page ever mixes eras or palettes.
 
 Series can be added, retitled, reordered, or moved between sections by editing one YAML file. Nothing in the templates or build script hard-codes a series.
 
@@ -44,9 +45,9 @@ Everything below already exists on the Squarespace site and is migrated by scrip
 | People | Tide and Timber | `tide-and-timber` | 21 | Polaroids. |
 | People | Graduations | `graduations` | 23 | |
 | Interludes | Quiet Days | `quiet-days` | 6 | |
-| Archive | Meditation on Solitude | `meditation-on-solitude` | 14 | |
-| Archive | Nightfall | `nightfall` | 12 | |
-| Archive | Outskirts | `outskirts` | 13 | |
+| Interludes | Meditation on Solitude | `meditation-on-solitude` | 14 | Moved from Archive 2026-11-17. |
+| Interludes | Nightfall | `nightfall` | 12 | Moved from Archive 2026-11-17. |
+| Interludes | Outskirts | `outskirts` | 13 | Moved from Archive 2026-11-17. |
 | Archive | Panoramic Streets: Monochrome | `panoramic-streets-monochrome` | 19 | |
 | Archive | Panoramic Streets: Color | `panoramic-streets-color` | 6 | |
 | Archive | Animal Companions | `animal-companions` | 2 | |
@@ -107,7 +108,7 @@ TODO.md                      # open questions and future work
 - `title`: `Christina Sun`
 - `tagline`: `Wild and human-altered landscapes documenting the tales of nature, stories of people, and everything in between.`
 - `description`: a new one-paragraph site description. Do not copy the old Squarespace description ("Landscape, Travel, and Street Photography..."), which is stale.
-- `nav`: the five sections above, with the slug and label for each.
+- `nav`: the six sections above, with the slug and label for each.
 - `instagram`: `https://instagram.com/chesunphotography` (from the current site footer and cover page).
 - `email`: `christinasunphotography@gmail.com`. This is the canonical address (decided 2026-09-13). The old cover page linked `chesunphotography@gmail.com`, which also exists but is not used on the site.
 - `base_url`: `https://christinasunphoto.com`
@@ -117,7 +118,7 @@ TODO.md                      # open questions and future work
 
 ```yaml
 title: Sand and Stone
-section: landscape          # landscape | people | interludes | archive
+section: landscape          # landscape | people | journeys | interludes | archive
 order: 30                   # position within the section index; lower first
 tone: monochrome            # color | monochrome
 layout: column              # column | grid   (default column)
@@ -196,7 +197,7 @@ Design vision: a quiet, gallery-white, editorial site where the design disappear
 
 Set a real type scale with intentional sizes and weights; body text max-width around 65ch. Type is the personality of the page; make the pairing feel chosen for a photographer, not defaulted.
 
-**Layout.** An 8px spacing scale used consistently. Header is minimal: wordmark left, five nav items right, a near-white bar with a subtle backdrop blur on every inner page. The landing page has no header; its navigation lives in the hero (see Landing slideshow). Mobile: a full-screen overlay menu with the same restraint. Footer is one quiet line (name, Instagram, email).
+**Layout.** An 8px spacing scale used consistently. Header is minimal: wordmark left, six nav items right (folded into the menu below 880px), a near-white bar with a subtle backdrop blur on every inner page. The landing page has no header; its navigation lives in the hero (see Landing slideshow). Mobile: a full-screen overlay menu with the same restraint. Footer is one quiet line (name, Instagram, email).
 
 ### Series pages: column layout (default)
 
@@ -213,7 +214,7 @@ Visual impact over density. One photograph per row, in sequence, so the order ch
 
 For high-volume galleries where scanning matters more than sequence, `layout: grid` gives a justified-row layout computed at build time from the known aspect ratios (rows of consistent height, images scaled to fill the row width exactly, last row left-aligned at natural size). No JavaScript layout, no masonry gaps. Hover: a subtle opacity ease (~0.92, 200ms), never a zoom-crop. No launch series uses this; it exists so Graduations or Love on the Coast can switch to it later with one line.
 
-### Section index pages (Landscape, People, Interludes)
+### Section index pages (Landscape, People, Journeys, Interludes)
 
 Series covers in justified rows computed at build time: covers are added to a row until, at a target height of about a third of the content width, they would fill it, then the row's height is solved so the covers plus gaps fill the width exactly. Every cover keeps its own aspect ratio, every image in a row has the same height, and titles line up. A trailing partial row keeps the target height rather than stretching. Under each cover, the series title in the serif and a small uppercase tone tag (Color or Monochrome) in the grotesque. Ordered by `order`. On phones the rows stack to one full-width cover each.
 
@@ -223,7 +224,7 @@ The same justified rows at a smaller target height, about a fifth of the content
 
 ### Landing slideshow
 
-Full-viewport crossfading slideshow of every image marked `featured` across all published series, in section order (Landscape, People, Interludes, Archive), then series order, then the order of each `featured` list. Each visit starts at a randomly chosen slide and runs on from there in that order, wrapping round: ~6s hold per image, ~1.4s opacity crossfade, and a barely-perceptible slow scale (1.0 → 1.04 over the hold) for life. A small inline script in the head picks the starting slide and preloads it at high priority before the stylesheets load; subsequent slides load just-in-time. Without JavaScript the first slide shows. Each slide is cropped to the viewport at its `focal` point from `series.yaml` (CSS `object-position`, default centre), so a tall frame can keep its sky or its ground. The site header is not shown on the landing page: the wordmark, the tagline (serif italic), and the five section links sit centred over the image, inside one soft radial scrim, so the navigation never competes with a light sky. A quiet line with Instagram and email sits at the foot. Pause the cycle when the tab is hidden. Under `prefers-reduced-motion`, show a single static image (the random starting slide).
+Full-viewport crossfading slideshow of every image marked `featured` across all published series, in section order (Landscape, People, Journeys, Interludes, Archive), then series order, then the order of each `featured` list. Each visit starts at a randomly chosen slide and runs on from there in that order, wrapping round: ~6s hold per image, ~1.4s opacity crossfade, and a barely-perceptible slow scale (1.0 → 1.04 over the hold) for life. A small inline script in the head picks the starting slide and preloads it at high priority before the stylesheets load; subsequent slides load just-in-time. Without JavaScript the first slide shows. Each slide is cropped to the viewport at its `focal` point from `series.yaml` (CSS `object-position`, default centre), so a tall frame can keep its sky or its ground. The site header is not shown on the landing page: the wordmark, the tagline (serif italic), and the six section links sit centred over the image, inside one soft radial scrim, so the navigation never competes with a light sky. A quiet line with Instagram and email sits at the foot. Pause the cycle when the tab is hidden. Under `prefers-reduced-motion`, show a single static image (the random starting slide).
 
 **Motion.** One orchestrated moment per page, not scattered effects: page content fades in briefly on load; column and grid items reveal on scroll via IntersectionObserver with a subtle staggered fade-up (opacity + ~8px, ~300ms). All motion uses gentle easing and is fully disabled under `prefers-reduced-motion`.
 
@@ -238,7 +239,7 @@ Full-viewport crossfading slideshow of every image marked `featured` across all 
 ## Pages
 
 - **Landing**: the slideshow, wordmark + tagline overlay, transparent nav.
-- **Section index** (Landscape, People, Interludes): grid of series covers as above.
+- **Section index** (Landscape, People, Journeys, Interludes): grid of series covers as above.
 - **Series page**: optional statement, then the column (or grid), opening into the lightbox.
 - **Archive index**: small covers + titles linking to archived series pages.
 - **About**: portrait, bio from `about.md`, exhibitions list, academic-site link, email + Instagram, minimal contact form (Formspree placeholder). No newsletter.
