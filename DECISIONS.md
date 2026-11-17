@@ -115,3 +115,6 @@ Christina cancelled the Squarespace website subscription and switched the DNS at
 
 **Journeys entries are titled by place and month: the first is *Vermilion Cliffs, March 2026*.**
 A plain place-and-date title rather than a thematic one like the Landscape series, since a journey is a record of one trip. The Paria Canyon roll is titled for the Vermilion Cliffs (official spelling, one L) and its folder and URL follow: `content/series/vermilion-cliffs/`, `/journeys/vermilion-cliffs/`. The image files keep their `paria-canyon-march-2026-NNN.jpg` names, matching the export folder. The old `/journeys/paria-canyon/` address was live for a day and is not redirected.
+
+**The landing slideshow runs a little faster: 5s per photograph.**
+Christina asked for slightly faster. The hold went from 6s to 5s and the crossfade from 1.4s to 1.2s; the slow zoom now ends at 1.035 instead of 1.04, so it drifts at the same rate rather than hurrying. The first slide now zooms too: it had been made active before the first paint, so it started fully zoomed with nothing to animate from.

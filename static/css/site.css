@@ -337,15 +337,18 @@ html:has(.page-landing), .page-landing {
   background: var(--tone, var(--dark));
   opacity: 0;
   transform: scale(1);
-  /* fade out over 1.4s; snap the scale back once invisible */
-  transition: opacity 1400ms var(--ease), transform 0s linear 1400ms;
+  /* fade out over 1.2s; snap the scale back once invisible */
+  transition: opacity 1200ms var(--ease), transform 0s linear 1200ms;
 }
 .hero-slide.is-active {
   opacity: 1;
-  transform: scale(1.04);
-  /* fade in over 1.4s; drift from 1.0 to 1.04 across the whole hold */
-  transition: opacity 1400ms var(--ease), transform 7400ms linear;
+  transform: scale(1.035);
+  /* fade in over 1.2s; drift from 1.0 to 1.035 across the 5s hold and the
+     fade out after it, the same unhurried rate as before the show sped up */
+  transition: opacity 1200ms var(--ease), transform 6200ms linear;
 }
+/* the first slide: visible at once, at its starting scale until painted */
+.hero-slide.is-entering { transform: scale(1); transition: none; }
 
 .hero-copy {
   position: absolute; inset: 0 0 auto;

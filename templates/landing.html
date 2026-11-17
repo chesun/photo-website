@@ -28,7 +28,7 @@
    ships with a src: the script below shows the one chosen in the head, and
    site.js loads each next slide just before it is needed. Under
    prefers-reduced-motion the starting slide simply stays. #}
-<section class="hero" data-hold="6000">
+<section class="hero" data-hold="5000">
   <div class="hero-slides" aria-hidden="true">
     {% for s in slides %}
     <img class="hero-slide" data-src="{{ s.src }}" data-srcset="{{ s.srcset }}"
@@ -47,7 +47,17 @@
       img.fetchPriority = "high";
       delete img.dataset.src;
       delete img.dataset.srcset;
-      img.classList.add("is-active");
+      // Shown at once, without the fade, but held at its starting scale until
+      // it has loaded and been painted; then the slow zoom runs as on every
+      // later slide. Made active straight away it would start fully zoomed.
+      img.classList.add("is-active", "is-entering");
+      function go() {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { img.classList.remove("is-entering"); });
+        });
+      }
+      if (img.complete) go();
+      else { img.addEventListener("load", go, { once: true }); img.addEventListener("error", go, { once: true }); }
     })();
   </script>
   {% endif %}

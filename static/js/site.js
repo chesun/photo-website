@@ -117,7 +117,7 @@ if (gallery) {
 const hero = document.querySelector(".hero");
 if (hero) {
   const slides = [...hero.querySelectorAll(".hero-slide")];
-  const hold = Number(hero.dataset.hold) || 6000;
+  const hold = Number(hero.dataset.hold) || 5000;
   let current = Math.max(0, slides.findIndex((s) => s.classList.contains("is-active")));
   let timer = null;
 
