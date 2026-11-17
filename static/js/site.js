@@ -128,11 +128,23 @@ if (hero) {
     delete img.dataset.src;
     delete img.dataset.srcset;
   }
+  // Safari's strips behind the clock and the toolbar take the colours of the
+  // slide's top and bottom edges (the .edge elements; see landing.html).
+  // theme-color does the same job in Safari 15 to 18.
+  const edgeTop = document.querySelector(".edge-top");
+  const edgeBottom = document.querySelector(".edge-bottom");
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  function edges(slide) {
+    if (edgeTop && slide.dataset.edgeTop) edgeTop.style.backgroundColor = slide.dataset.edgeTop;
+    if (edgeBottom && slide.dataset.edgeBottom) edgeBottom.style.backgroundColor = slide.dataset.edgeBottom;
+    if (themeColor && slide.dataset.edgeTop) themeColor.content = slide.dataset.edgeTop;
+  }
   function advance() {
     const next = (current + 1) % slides.length;
     if (!slides[next].complete || !slides[next].naturalWidth) return;   // not there yet: hold this slide
     slides[current].classList.remove("is-active");
     slides[next].classList.add("is-active");
+    edges(slides[next]);
     current = next;
     load(slides[(current + 1) % slides.length]);     // stay one slide ahead
   }

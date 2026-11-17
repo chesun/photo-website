@@ -29,11 +29,19 @@
    ships with a src: the script below shows the one chosen in the head, and
    site.js loads each next slide just before it is needed. Under
    prefers-reduced-motion the starting slide simply stays. #}
+{# Safari on iOS 26 colours the strip behind its clock from a full-width
+   pinned element at the top edge, and the strip behind its toolbar from one
+   at the bottom edge, even when they are invisible. These two carry the
+   colours of the current slide's top and bottom edges (computed at build
+   time), so the strips read as the photograph carried on. #}
+<div class="edge edge-top" aria-hidden="true"></div>
+<div class="edge edge-bottom" aria-hidden="true"></div>
 <section class="hero" data-hold="5000">
   <div class="hero-slides" aria-hidden="true">
     {% for s in slides %}
     <img class="hero-slide" data-src="{{ s.src }}" data-srcset="{{ s.srcset }}"
-         sizes="{{ s.sizes }}" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }};object-position:{{ s.focus }}">
+         sizes="{{ s.sizes }}" width="{{ s.width }}" height="{{ s.height }}" alt="" decoding="async" style="--tone:{{ s.color }};object-position:{{ s.focus }}"
+         data-edge-top="{{ s.edge_top }}" data-edge-bottom="{{ s.edge_bottom }}">
     {% endfor %}
     {% if slides %}
     <noscript><img class="hero-slide is-active" src="{{ slides[0].src }}" srcset="{{ slides[0].srcset }}" sizes="{{ slides[0].sizes }}" width="{{ slides[0].width }}" height="{{ slides[0].height }}" alt="" style="object-position:{{ slides[0].focus }}"></noscript>
@@ -52,6 +60,9 @@
       // it has loaded and been painted; then the slow zoom runs as on every
       // later slide. Made active straight away it would start fully zoomed.
       img.classList.add("is-active", "is-entering");
+      document.querySelector(".edge-top").style.backgroundColor = img.dataset.edgeTop;
+      document.querySelector(".edge-bottom").style.backgroundColor = img.dataset.edgeBottom;
+      document.querySelector('meta[name="theme-color"]').content = img.dataset.edgeTop;
       function go() {
         requestAnimationFrame(function () {
           requestAnimationFrame(function () { img.classList.remove("is-entering"); });

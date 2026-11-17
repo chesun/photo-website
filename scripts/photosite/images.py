@@ -84,6 +84,28 @@ def average_color(image):
     return f"#{r:02x}{g:02x}{b:02x}"
 
 
+def edge_colors(path, focal_x=0.5, screen_ratio=9 / 19.5, band=0.04):
+    """Mean colours of the top and bottom edges of a photograph as a phone shows it.
+
+    On a phone held upright the landing show covers a screen about 9:19.5,
+    so a wider frame is cropped at the sides around its focal point and
+    keeps its full height. The colours are the means of the top and bottom
+    `band` of that visible width. Safari on iOS 26 tints the strips behind
+    its clock and toolbar from them (see landing.html).
+    """
+    with Image.open(path) as opened:
+        image = opened.convert("RGB")
+    w, h = image.size
+    visible = min(1.0, screen_ratio / (w / h))
+    left = (1 - visible) * focal_x * w
+    right = left + visible * w
+    rows = max(1, round(h * band))
+    def mean(box):
+        r, g, b = (int(round(v)) for v in ImageStat.Stat(image.crop(box)).mean[:3])
+        return f"#{r:02x}{g:02x}{b:02x}"
+    return mean((round(left), 0, round(right), rows)), mean((round(left), h - rows, round(right), h))
+
+
 def process(source, cache_dir):
     """Return ImageInfo for a source file, computing and caching it if needed."""
     source = Path(source)

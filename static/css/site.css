@@ -318,6 +318,17 @@ html:has(.page-landing), .page-landing {
   background: var(--dark);
   overflow: hidden;
 }
+/* Invisible, but Safari still reads their colour for its strips (see
+   landing.html). Over 80% of the width and over 10px tall to qualify. */
+.edge {
+  position: fixed; left: 0; right: 0; z-index: 1;
+  height: 12px;
+  background-color: var(--dark);
+  visibility: hidden;
+  pointer-events: none;
+}
+.edge-top { top: 0; }
+.edge-bottom { bottom: 0; }
 .hero-slides { position: absolute; inset: 0; }
 .hero-slide {
   position: absolute; inset: 0;
