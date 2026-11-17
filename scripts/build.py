@@ -40,7 +40,7 @@ def build():
     site_content = content_lib.load_content(CONTENT)
     shutil.rmtree(DIST, ignore_errors=True)
     DIST.mkdir(parents=True, exist_ok=True)
-    renderer = render.Renderer(TEMPLATES, site_content, DIST)
+    renderer = render.Renderer(TEMPLATES, site_content, DIST, STATIC)
 
     pages = []                        # (url, lastmod) for the sitemap
 

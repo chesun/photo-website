@@ -21,8 +21,8 @@
   {% block font_preloads %}<link rel="preload" href="/static/fonts/newsreader-300.woff2" as="font" type="font/woff2" crossorigin>{% endblock %}
   {# Before the stylesheets, so a script here runs without waiting for them. #}
   {% block early_head %}{% endblock %}
-  <link rel="stylesheet" href="/static/fonts/fonts.css">
-  <link rel="stylesheet" href="/static/css/site.css">
+  <link rel="stylesheet" href="{{ asset('/static/fonts/fonts.css') }}">
+  <link rel="stylesheet" href="{{ asset('/static/css/site.css') }}">
   {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}page{% endblock %}">
@@ -54,6 +54,6 @@
     </p>
   </footer>
 
-  <script type="module" src="/static/js/site.js"></script>
+  <script type="module" src="{{ asset('/static/js/site.js') }}"></script>
 </body>
 </html>

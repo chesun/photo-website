@@ -5,6 +5,7 @@ plain dicts and lists prepared here (the "view model"). Keeping that
 preparation in Python makes the templates short and the logic testable.
 """
 
+import hashlib
 from pathlib import Path
 
 import markdown
@@ -22,8 +23,10 @@ GUTTER_PX = 16
 
 
 class Renderer:
-    def __init__(self, templates_dir, content, dist_dir):
+    def __init__(self, templates_dir, content, dist_dir, static_dir=None):
         self.content = content
+        self.static = Path(static_dir) if static_dir else None
+        self._versions = {}
         self.site = content.site
         self.dist = Path(dist_dir)
         self.env = Environment(
@@ -32,7 +35,21 @@ class Renderer:
             trim_blocks=True, lstrip_blocks=True,
         )
         # Values every template can use without being passed them explicitly.
-        self.env.globals.update(site=self.site, sections=content.sections)
+        self.env.globals.update(site=self.site, sections=content.sections, asset=self.asset)
+
+    def asset(self, url):
+        """`/static/...` with `?v=` and a hash of the file's contents.
+
+        GitHub Pages lets browsers keep a stylesheet or script for ten minutes,
+        so a page fresh from a deploy could run with the previous CSS. A new
+        address whenever the contents change rules that out.
+        """
+        if self.static is None or not url.startswith("/static/"):
+            return url
+        if url not in self._versions:
+            data = (self.static / url[len("/static/"):]).read_bytes()
+            self._versions[url] = hashlib.sha256(data).hexdigest()[:10]
+        return f"{url}?v={self._versions[url]}"
 
     # ----------------------------------------------------------------------
     # Writing pages
