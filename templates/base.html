@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1{% block viewport_extra %}{% endblock %}">
   <title>{% block title %}{{ site.title }}{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ site.description }}{% endblock %}">
   {% if not url.endswith('.html') %}<link rel="canonical" href="{{ site.base_url }}{{ url }}">{% endif %}

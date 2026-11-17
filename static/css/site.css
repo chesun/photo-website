@@ -66,6 +66,12 @@ a:focus-visible, button:focus-visible {
 }
 
 img { display: block; max-width: 100%; height: auto; }
+/* On a phone, a touch that starts a scroll can land on a photograph and
+   leave it selected (tinted like selected text) or flash the grey tap
+   highlight. Photographs are never meant to be selected; links made of a
+   photograph get no tap highlight. Long-press to save still works. */
+img { -webkit-user-select: none; user-select: none; }
+a:has(img) { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 
 figure { margin: 0; }
 ul { list-style: none; margin: 0; padding: 0; }
@@ -288,16 +294,22 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 
 .page-landing .site-main { padding: 0; }
 .page-landing .site-footer { display: none; }
-/* Dark behind the show, so nothing pale can show past its edge: under
-   Safari's toolbar, or beside it in landscape on a phone. */
-html:has(.page-landing), .page-landing { background: var(--dark); }
+/* The landing page is one screen that does not scroll. Dark behind it, so
+   nothing pale can show past an edge, and no rubber-band bounce. */
+html:has(.page-landing), .page-landing {
+  background: var(--dark);
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.page-landing { min-height: 0; }
 
-/* The photographs fill the large viewport (toolbars hidden), so on a phone
-   they run on under Safari's toolbar instead of stopping above it and
-   leaving a strip of page. The words are centred in the small viewport
+/* Pinned to the screen, so there is nothing to scroll. The photographs fill
+   the large viewport (toolbars hidden), running on under the clock and
+   Safari's toolbar on a phone; the words are centred in the small viewport
    (toolbars shown), the part that is always visible. */
 .hero {
-  position: relative;
+  position: fixed;
+  top: 0; left: 0; right: 0;
   height: 100vh; height: 100lvh;
   background: var(--dark);
   overflow: hidden;
@@ -323,9 +335,12 @@ html:has(.page-landing), .page-landing { background: var(--dark); }
 .hero-copy {
   position: absolute; inset: 0 0 auto;
   height: 100vh; height: 100svh;
+  padding-top: max(var(--s6), env(safe-area-inset-top));
+  padding-bottom: max(var(--s6), env(safe-area-inset-bottom));
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; color: #fff;
-  padding: var(--s6) var(--gutter);
   /* the scrim: a soft radial gradient behind the text only, never the whole frame */
   background: radial-gradient(ellipse 64% 58% at 50% 50%, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.13) 55%, rgba(0, 0, 0, 0) 100%);
   text-shadow: 0 1px 14px rgba(0, 0, 0, 0.28);
@@ -366,9 +381,20 @@ html:has(.page-landing), .page-landing { background: var(--dark); }
   .hero-nav ul { flex-direction: column; align-items: center; gap: 0; }
   .hero-nav a { padding: 12px 0; }
 }
+/* A phone turned sideways: the landing page does not scroll, so everything
+   has to fit in about 320px of height. Wider tagline, one row of links. */
+@media (max-height: 480px) and (min-width: 601px) {
+  .hero-tagline { max-width: 52ch; margin-top: var(--s2); font-size: 1.0625rem; }
+  .hero-nav { margin-top: var(--s3); }
+  .hero-nav ul { gap: 0 clamp(var(--s2), 3vw, var(--s4)); flex-wrap: nowrap; }
+  .hero-nav a { letter-spacing: 0.18em; text-indent: 0.18em; }
+}
 
 .hero-foot {
-  position: absolute; left: 0; right: 0; bottom: var(--s3);
+  position: absolute; left: 0; right: 0;
+  /* the bottom of the small viewport: above Safari's toolbar, not under it */
+  bottom: calc(var(--s3) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(100lvh - 100svh + var(--s3) + env(safe-area-inset-bottom, 0px));
   margin: 0;
   display: flex; justify-content: center; gap: var(--s3);
   font-size: var(--fs-caption); letter-spacing: 0.06em;

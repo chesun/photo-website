@@ -2,6 +2,8 @@
 {% set active_section = none %}
 {% block body_class %}page page-landing{% endblock %}
 {% block theme_color %}#0e0e0e{% endblock %}
+{# Draw under the clock and the home bar too; the hero pads its words clear of them. #}
+{% block viewport_extra %}, viewport-fit=cover{% endblock %}
 {% block font_preloads %}<link rel="preload" href="/static/fonts/newsreader-italic-300.woff2" as="font" type="font/woff2" crossorigin>{% endblock %}
 {% block early_head %}
   {% if slides %}
