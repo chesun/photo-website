@@ -304,15 +304,30 @@ html:has(.page-landing), .page-landing {
 .page-landing { min-height: 0; }
 
 /* Pinned to the screen, so there is nothing to scroll. The photographs fill
-   the large viewport (toolbars hidden), running on under the clock and
-   Safari's toolbar on a phone; the words are centred in the small viewport
-   (toolbars shown), the part that is always visible. */
+   the large viewport; the words are centred in the small viewport (toolbars
+   shown), the part that is always visible. */
 .hero {
+  --hero-bleed: 0px;
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 100vh; height: 100lvh;
+  height: 100vh; height: calc(100lvh + var(--hero-bleed));
   background: var(--dark);
   overflow: hidden;
+}
+/* Touch screens. Safari on iOS 26 clips anything position: fixed to the
+   strip between the clock and its floating toolbar; only content in the
+   page itself runs on behind the toolbar. So here the show is part of the
+   page, a little taller than the screen so it reaches under the toolbar,
+   and swiping on it is switched off instead of the page being locked.
+   Behind the clock Safari shows the page colour while the page is at the
+   top, so that band stays dark. */
+@media (hover: none) and (pointer: coarse) {
+  html:has(.page-landing), .page-landing { overflow: visible; }
+  .hero {
+    --hero-bleed: 120px;
+    position: absolute;
+    touch-action: none;
+  }
 }
 .hero-slides { position: absolute; inset: 0; }
 .hero-slide {
@@ -394,7 +409,7 @@ html:has(.page-landing), .page-landing {
   position: absolute; left: 0; right: 0;
   /* the bottom of the small viewport: above Safari's toolbar, not under it */
   bottom: calc(var(--s3) + env(safe-area-inset-bottom, 0px));
-  bottom: calc(100lvh - 100svh + var(--s3) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(100lvh - 100svh + var(--hero-bleed, 0px) + var(--s3) + env(safe-area-inset-bottom, 0px));
   margin: 0;
   display: flex; justify-content: center; gap: var(--s3);
   font-size: var(--fs-caption); letter-spacing: 0.06em;
