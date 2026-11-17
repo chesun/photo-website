@@ -288,10 +288,17 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 
 .page-landing .site-main { padding: 0; }
 .page-landing .site-footer { display: none; }
+/* Dark behind the show, so nothing pale can show past its edge: under
+   Safari's toolbar, or beside it in landscape on a phone. */
+html:has(.page-landing), .page-landing { background: var(--dark); }
 
+/* The photographs fill the large viewport (toolbars hidden), so on a phone
+   they run on under Safari's toolbar instead of stopping above it and
+   leaving a strip of page. The words are centred in the small viewport
+   (toolbars shown), the part that is always visible. */
 .hero {
   position: relative;
-  height: 100vh; height: 100svh;
+  height: 100vh; height: 100lvh;
   background: var(--dark);
   overflow: hidden;
 }
@@ -314,7 +321,8 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 }
 
 .hero-copy {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0 0 auto;
+  height: 100vh; height: 100svh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; color: #fff;
   padding: var(--s6) var(--gutter);
