@@ -294,39 +294,29 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 
 .page-landing .site-main { padding: 0; }
 .page-landing .site-footer { display: none; }
-/* Dark behind the show, so nothing pale can show past an edge, and no
-   rubber-band bounce. The page scrolls if its words need more room than the
-   screen has, as on a phone turned sideways. */
+/* The landing page is the visible screen and nothing more.
+
+   On a phone, Safari (iOS 26) owns the strips behind the clock and behind
+   its floating toolbar. It paints a flat colour behind the clock while a
+   page is at its top, cuts position: fixed content off at both bars, and
+   draws page content behind the toolbar only when the page runs past the
+   screen, that is, when it scrolls. So a photograph cannot fill those strips
+   without the page scrolling, and a scrolling page always reaches an edge
+   where Safari's strip shows. Rather than fight that, the show fills the
+   small viewport exactly (toolbars shown, the part that is always visible)
+   and the page background is dark, which Safari uses for its strips: they
+   read as a frame. The page scrolls only if the words need more room than
+   the screen has, as on a phone turned sideways. */
 html:has(.page-landing), .page-landing {
   background: var(--dark);
   overscroll-behavior: none;
 }
 .page-landing { min-height: 0; }
-
-/* The photographs fill the large viewport (toolbars hidden) plus two bleeds,
-   and grow with the words if those need more room. On a computer the bleeds
-   are zero and the show is exactly one screen. */
 .hero {
-  --bleed-top: 0px;
-  --bleed-bottom: 0px;
   position: relative;
-  min-height: 100vh;
-  min-height: calc(100lvh + var(--bleed-top) + var(--bleed-bottom));
+  min-height: 100vh; min-height: 100svh;
   background: var(--dark);
   overflow: hidden;
-}
-/* Phones. Safari on iOS 26 draws the page behind its floating toolbar, but
-   behind the clock only once the page has scrolled away from the very top;
-   at the top it paints a flat colour there. So the show starts a clock-bar's
-   height above where the words begin, and the page opens scrolled down by
-   that much (the script at the end of landing.html), which puts the
-   photograph behind the clock. The bottom bleed lets it run on under the
-   toolbar. */
-@media (hover: none) and (pointer: coarse) {
-  .hero {
-    --bleed-top: env(safe-area-inset-top, 0px);
-    --bleed-bottom: 120px;
-  }
 }
 .hero-slides { position: absolute; inset: 0; }
 .hero-slide {
@@ -349,12 +339,11 @@ html:has(.page-landing), .page-landing {
 /* the first slide: visible at once, at its starting scale until painted */
 .hero-slide.is-entering { transform: scale(1); transition: none; }
 
-/* The words fill the small viewport (toolbars shown), the part that is always
-   visible, and grow if they need more. The wordmark-to-links group is
-   centred in the space above the contact line, which sits at the bottom. */
+/* The words fill the show and grow it if they need more room. The
+   wordmark-to-links group is centred in the space above the contact line,
+   which sits at the bottom. */
 .hero-copy {
   position: relative;
-  margin-top: var(--bleed-top);
   min-height: 100vh; min-height: 100svh;
   padding-top: max(var(--s6), env(safe-area-inset-top));
   padding-bottom: max(var(--s6), env(safe-area-inset-bottom));

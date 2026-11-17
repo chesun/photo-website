@@ -2,7 +2,8 @@
 {% set active_section = none %}
 {% block body_class %}page page-landing{% endblock %}
 {% block theme_color %}#0e0e0e{% endblock %}
-{# Draw under the clock and the home bar too; the hero pads its words clear of them. #}
+{# Lets the show fill the strips beside the camera on a phone turned sideways;
+   the hero pads its words clear of them. #}
 {% block viewport_extra %}, viewport-fit=cover{% endblock %}
 {% block font_preloads %}<link rel="preload" href="/static/fonts/newsreader-italic-300.woff2" as="font" type="font/woff2" crossorigin>{% endblock %}
 {% block early_head %}
@@ -78,20 +79,5 @@
       <a href="mailto:{{ site.email }}">{{ site.email }}</a>
     </p>
   </div>
-  {# Phones: open scrolled down by the clock bar's height, so Safari draws the
-     photograph behind the clock instead of a flat colour (see .hero in
-     site.css). The offset is the words' top margin, which is zero on a
-     computer and on a phone turned sideways. #}
-  <script>
-    (function () {
-      var bleed = parseFloat(getComputedStyle(document.querySelector(".hero-copy")).marginTop) || 0;
-      if (!bleed) return;
-      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-      function settle() { if (window.scrollY < bleed) window.scrollTo(0, bleed); }
-      settle();
-      window.addEventListener("load", settle, { once: true });
-      window.addEventListener("pageshow", function (e) { if (e.persisted) settle(); });
-    })();
-  </script>
 </section>
 {% endblock %}
