@@ -86,12 +86,17 @@
 
   /* landing preview */
   .landing { display: flex; flex-wrap: wrap; gap: 12px; }
-  .slide { width: 236px; flex: 0 0 auto; cursor: pointer; }
+  .slide { width: 236px; flex: 0 0 auto; cursor: pointer; position: relative; }
   .slide .frame { aspect-ratio: 16 / 9; overflow: hidden; border-radius: 3px; background: var(--soft); position: relative; }
   .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .slide .n { position: absolute; left: 6px; top: 6px; font-size: 10px; background: rgba(251,251,249,.94); padding: 2px 6px; border-radius: 3px; letter-spacing: .1em; }
   .slide .who { font-size: 11.5px; color: var(--mute); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .slide:hover .frame { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .slide .unfeature { position: absolute; right: 6px; top: 6px; padding: 3px 7px; font-size: 12px; line-height: 1; border-radius: 3px; border: 0; background: rgba(255,255,255,.94); color: var(--ink); opacity: 0; transition: opacity 120ms; }
+  .slide:hover .unfeature, .slide:focus-within .unfeature, .slide.menu-open .unfeature { opacity: 1; }
+  .slide .menu { top: 34px; right: 6px; cursor: default; }
+  .slide .unfeature:hover { background: var(--warn); color: #fff; }
+  @media (hover: none) { .slide .unfeature { opacity: 1; } }
 
   /* holding */
   .held { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -277,15 +282,22 @@ function render() {
     if (s.error || !s.published) continue;
     for (const f of s.featured) {
       n++;
-      const d = el('div', 'slide', `<div class="frame"><img src="${imgUrl(s.slug, 'medium', f)}" style="object-position:${s.focal[f] || '50% 50%'}" alt=""><span class="n">${n}</span></div><div class="who">${escapeHtml(s.title)}</div>`);
+      const d = el('div', 'slide', `<div class="frame"><img src="${imgUrl(s.slug, 'medium', f)}" style="object-position:${s.focal[f] || '50% 50%'}" alt=""><span class="n">${n}</span><button class="unfeature" title="Take out of the landing slideshow">✕</button></div><div class="who">${escapeHtml(s.title)}</div>
+        <div class="menu ask">
+          <div class="ask-text">Take out of the slideshow? It stays in ${escapeHtml(s.title)}.</div>
+          <div class="ask-row"><button class="yes">Take out</button><button class="no">Keep</button></div>
+        </div>`);
       d.tabIndex = 0; d.setAttribute('role', 'button');
-      d.onclick = () => openFocal(s, f);
-      d.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFocal(s, f); } };
+      $('.unfeature', d).onclick = (e) => { e.stopPropagation(); closeMenus(); $('.ask', d).classList.add('open'); d.classList.add('menu-open'); $('.ask .no', d).focus(); };
+      $('.ask .no', d).onclick = (e) => { e.stopPropagation(); closeMenus(); };
+      $('.ask .yes', d).onclick = (e) => { e.stopPropagation(); closeMenus(); unfeature(s, f); };
+      d.onclick = (e) => { if (!e.target.closest('.menu')) openFocal(s, f); };
+      d.onkeydown = (e) => { if (e.target !== d) return; if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFocal(s, f); } };
       landing.appendChild(d);
     }
   }
   if (!n) landing.appendChild(el('p', 'empty', 'No featured images yet. Star some below.'));
-  group('slideshow', 'Landing slideshow', `${n} photograph${n === 1 ? '' : 's'} · starts at a random slide, then runs in this order · click a slide to set its focal point`, n)
+  group('slideshow', 'Landing slideshow', `${n} photograph${n === 1 ? '' : 's'} · starts at a random slide, then runs in this order · click a slide to set its focal point · ✕ takes it out of the show`, n)
     .appendChild(landing);
 
   // Series by section, every section shown even when empty
@@ -409,7 +421,7 @@ function renderPhoto(s, f, i, strip) {
   return p;
 }
 function clearDrops(strip) { strip.querySelectorAll('.photo').forEach((q) => q.classList.remove('drop-before', 'drop-after')); }
-function closeMenus() { document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open')); document.querySelectorAll('.photo.menu-open').forEach((q) => q.classList.remove('menu-open')); }
+function closeMenus() { document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open')); document.querySelectorAll('.photo.menu-open, .slide.menu-open').forEach((q) => q.classList.remove('menu-open')); }
 document.addEventListener('click', (e) => { if (!e.target.closest('.menu') && !e.target.closest('.more')) closeMenus(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !focal && !viewer) closeMenus(); });
 
@@ -432,6 +444,19 @@ function renderHeld(item) {
 // ============================================================================
 // Saving, uploading, moving
 // ============================================================================
+// Taking a slide out of the show saves at once: it is one click, and the ★
+// on the photo in its series puts it back.
+async function unfeature(s, f) {
+  const k = s.featured.indexOf(f); if (k < 0) return;
+  s.featured.splice(k, 1);
+  try {
+    await api('/_curate/save', { slug: s.slug, images: s.images, cover: s.cover, featured: s.featured, focal: s.focal });
+    state.dirty.delete(s.slug);
+    toast(`Took ${f} out of the slideshow · ★ it in ${s.title} to put it back`, false, 4000);
+  } catch (err) { s.featured.splice(k, 0, f); toast('Not saved: ' + err.message, true, 6000); }
+  render();
+}
+
 async function save(s) {
   try {
     await api('/_curate/save', { slug: s.slug, images: s.images, cover: s.cover, featured: s.featured, focal: s.focal });
