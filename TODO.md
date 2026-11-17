@@ -8,7 +8,7 @@ Open questions and future work for the photography site. Decisions, once made, m
 
 ## Open questions
 
-- [ ] **Review the landing slideshow selection by eye** in the curate page once phase 3 exists. The current eight (two from Alpenglow, one each from Storm Light, Sand and Stone, The Mountains are Calling, From the Earth to the Stars, Love on the Coast, Graduations) were a first pass on 2026-09-14, chosen for one or two per genre and for surviving a 16:9 crop.
+- [ ] **Review the landing slideshow selection by eye** in the curate page once phase 3 exists. The first pass on 2026-09-14 chose eight, one or two per genre, for surviving a 16:9 crop. On 2026-11-17 Christina took The Mountains are Calling out, leaving seven: two from Alpenglow, one each from Storm Light, Sand and Stone, From the Earth to the Stars, Love on the Coast, Graduations.
 - [ ] **Set focal points by eye on the landing slideshow images**, in the curate page once phase 3 exists (click on the photo to place the anchor; it writes `focal:` in the series YAML). Until then a centre crop applies.
 
 - [ ] **Decide what to do with `content/_unplaced/`.** Eight images the old sitemap listed but the gallery pages never showed, one each for Nightfall, Streets of Sacramento, UC Davis Symphony Orchestra, The City by the Sea, and two each for Streets of Davis and Adventure. Move into a series, or delete.
@@ -20,8 +20,7 @@ Open questions and future work for the photography site. Decisions, once made, m
   - *Panoramic Streets: Color* (6) and *Animal Companions* (2) and *The City by the Sea* (3) are too small to stand alone. Merge, or accept as archive stubs.
   - The three orphaned galleries (Streets of Davis, Life and Adventure, Adventure) are migrated as unpublished. Decide keep, merge, or delete.
 - [ ] **Sort the personal frames between Journeys and Interludes.** Trips go to Journeys (friends on the Lost Coast, JMT frames with people in them); beach days (2022-01, 2022-09) and life snaps from 2023 may suit Quiet Days in Interludes. Needs a pass through the library.
-- [ ] **Shape the Paria Canyon journey.** All 30 edited 35mm exports from `Dropbox/Photography/Photos/2026/2026-03-22_paria-canyon/35mm/exports/` are in, at 2500px, in roll order. Choose and sequence them in the curate page, pick a cover (it defaults to the first frame), and write a statement. Decide whether the four 120 monochrome frames from the same trip (`120/scans/`) join it.
-- [ ] **How Journeys entries are titled.** A plain place-and-date (*Paria Canyon, March 2026*) or a title like the thematic series. *Paria Canyon* is a working title.
+- [ ] **Shape the Vermilion Cliffs journey** (`content/series/vermilion-cliffs/`, the Paria Canyon roll). All 30 edited 35mm exports from `Dropbox/Photography/Photos/2026/2026-03-22_paria-canyon/35mm/exports/` are in, at 2500px, in roll order. Choose and sequence them in the curate page, pick a cover (it defaults to the first frame), and write a statement. Decide whether the four 120 monochrome frames from the same trip (`120/scans/`) join it.
 - [ ] **Split Sand and Stone.** Its statement describes one trip (Eastern Sierra and Death Valley, January 2024). Christina picks the frames that are a record of the trip rather than a statement; those become an Eastern Sierra and Death Valley entry in Journeys, and the rest stays in Landscape or joins the sandstone work.
 
 ## After launch

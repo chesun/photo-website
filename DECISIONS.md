@@ -110,3 +110,8 @@ Christina wanted a home for trip photographs that are neither statement landscap
 
 **christinasunphoto.com now points at GitHub Pages, over HTTPS.**
 Christina cancelled the Squarespace website subscription and switched the DNS at Squarespace, which stays registrar and DNS host. The "Squarespace Defaults" preset was deleted and "Squarespace Domain Connect" kept; the apex has GitHub's four A records (185.199.108.153 to 185.199.111.153) and `www` is a CNAME to `chesun.github.io`. GitHub did not start issuing a certificate in the two hours after the DNS change; removing and re-adding the custom domain in the Pages settings got it approved within seconds, for both the apex and `www`. Enforce HTTPS is on, and `www` redirects to the apex.
+
+## 2026-11-18
+
+**Journeys entries are titled by place and month: the first is *Vermilion Cliffs, March 2026*.**
+A plain place-and-date title rather than a thematic one like the Landscape series, since a journey is a record of one trip. The Paria Canyon roll is titled for the Vermilion Cliffs (official spelling, one L) and its folder and URL follow: `content/series/vermilion-cliffs/`, `/journeys/vermilion-cliffs/`. The image files keep their `paria-canyon-march-2026-NNN.jpg` names, matching the export folder. The old `/journeys/paria-canyon/` address was live for a day and is not redirected.
