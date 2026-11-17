@@ -213,7 +213,7 @@ function render() {
     '<span><b>Drag</b> to reorder</span><span><b>◧</b> cover on the section index</span><span><b>★</b> in the landing slideshow</span><span><b>⌖</b> focal point for crops</span><span><b>⋯</b> move or remove</span>'));
 
   // Landing preview, in the order the show runs
-  const h = el('h2', 'section', 'Landing slideshow <small>in running order · click a slide to set its focal point</small>');
+  const h = el('h2', 'section', 'Landing slideshow <small>starts at a random slide, then runs in this order · ★ a photo below to add it · click a slide to set its focal point</small>');
   main.appendChild(h);
   const landing = el('div', 'landing');
   let n = 0;

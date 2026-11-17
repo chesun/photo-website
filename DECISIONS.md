@@ -99,3 +99,8 @@ Three independent reviewers (curate front end, Python side, built site) reported
 **Deployed to GitHub Pages from a public repository, chesun/photo-website.**
 GitHub Pages on a free account requires a public repository, and the photographs are public on the site anyway. The workflow builds with the same script as the local build and caches processed variants between runs. The custom domain is configured on the GitHub side from day one; the DNS change at Squarespace is Christina's to make when she wants the switch, and until then visitors see the old site. No old URLs are redirected (decided 2026-09-12).
 
+
+## 2026-11-17
+
+**The landing slideshow starts at a random slide.**
+Christina's request, so a returning visitor does not always open on the same photograph. Only the starting point is random; the show then runs in the usual order (section, series, `featured` list) and wraps round, so the sequence she arranges in the curate page still holds. The choice is made by an inline script ahead of the stylesheets, which preloads that slide, so the random start costs no load time. Without JavaScript the first slide shows. The set itself stays curated with the ★ in the curate page.

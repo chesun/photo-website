@@ -19,6 +19,8 @@
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
   <link rel="preload" href="/static/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
   {% block font_preloads %}<link rel="preload" href="/static/fonts/newsreader-300.woff2" as="font" type="font/woff2" crossorigin>{% endblock %}
+  {# Before the stylesheets, so a script here runs without waiting for them. #}
+  {% block early_head %}{% endblock %}
   <link rel="stylesheet" href="/static/fonts/fonts.css">
   <link rel="stylesheet" href="/static/css/site.css">
   {% block head %}{% endblock %}

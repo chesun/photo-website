@@ -107,17 +107,18 @@ if (gallery) {
 }
 
 // --- Landing slideshow -------------------------------------------------------
-// Crossfade through the slides on a timer. Only the first slide ships with a
+// Crossfade through the slides on a timer, starting from the random slide the
+// landing page showed first and wrapping round. Only that slide is given a
 // src; each next slide is loaded while the current one is showing, so the
 // page never downloads a photograph it has not reached yet. The timer stops
-// when the tab is hidden and under prefers-reduced-motion the first slide
+// when the tab is hidden and under prefers-reduced-motion the starting slide
 // simply stays.
 
 const hero = document.querySelector(".hero");
 if (hero) {
   const slides = [...hero.querySelectorAll(".hero-slide")];
   const hold = Number(hero.dataset.hold) || 6000;
-  let current = 0;
+  let current = Math.max(0, slides.findIndex((s) => s.classList.contains("is-active")));
   let timer = null;
 
   function load(img) {
@@ -145,7 +146,7 @@ if (hero) {
   }
 
   if (!reducedMotion) {
-    load(slides[1]);
+    load(slides[(current + 1) % slides.length]);
     document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
     if (!document.hidden) start();
   }

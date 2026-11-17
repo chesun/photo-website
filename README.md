@@ -93,7 +93,7 @@ Nothing of the page goes into `dist/`. You can always edit the YAML by hand inst
 
 ## The landing slideshow
 
-The landing page cycles through every image listed under `featured` in any published series, in section order (Landscape, People, Interludes, Archive) and then series order. Add or remove filenames there to change the show. The first slide is preloaded; the rest load one ahead as the show runs.
+The landing page cycles through every image listed under `featured` in any published series, in section order (Landscape, People, Interludes, Archive) and then series order. Each visit starts at a random slide and runs on from there. To change the set, star (★) or unstar photographs in the curate page, or add or remove filenames under `featured` by hand; the strip at the top of the curate page shows the whole set in running order. The starting slide is preloaded; the rest load one ahead as the show runs.
 
 ## Column or grid
 
