@@ -11,8 +11,6 @@ from pathlib import Path
 import markdown
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from . import images
-
 # How wide a photo may be on the page, and how tall. These must match the CSS
 # variables --content-width and --frame-max-height in static/css/site.css,
 # because the `sizes` attribute tells the browser which srcset file to fetch
@@ -106,12 +104,6 @@ class Renderer:
         """A landing-page slide: the large variant, sized to the viewport."""
         variants = info.variants
         img_url = f"/img/{series.slug}/"
-        focus = series.focal.get(filename, "50% 50%")
-        try:
-            focal_x = float(focus.split()[0].rstrip("%")) / 100
-        except (ValueError, IndexError):
-            focal_x = 0.5
-        edge_top, edge_bottom = images.edge_colors(variants["thumb"]["path"], focal_x)
         return {
             "src": img_url + published["large"],
             "srcset": ", ".join(f"{img_url}{published[n]} {variants[n]['width']}w" for n in ("small", "medium", "large")),
@@ -123,9 +115,7 @@ class Renderer:
             "color": info.average_color,
             "alt": series.captions.get(filename) or series.title,
             "series_url": series.url,
-            "focus": focus,
-            "edge_top": edge_top,
-            "edge_bottom": edge_bottom,
+            "focus": series.focal.get(filename, "50% 50%"),
         }
 
     def cover(self, series, info, published):
