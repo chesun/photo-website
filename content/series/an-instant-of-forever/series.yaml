@@ -7,11 +7,11 @@ tone: color
 layout: column
 published: true
 statement: ''
-cover: ap-polaroids-01.jpg
+cover: ap-polaroids-14.jpg
 featured: []
 images:
-- ap-polaroids-01.jpg
 - ap-polaroids-12.jpg
+- ap-polaroids-01.jpg
 - ap-polaroids-02.jpg
 - ap-polaroids-06.jpg
 - ap-polaroids-04.jpg
@@ -23,3 +23,4 @@ images:
 - ap-polaroids-16.jpg
 - ap-polaroids-17.jpg
 captions: {}
+focal: {}

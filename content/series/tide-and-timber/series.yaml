@@ -7,14 +7,13 @@ tone: color
 layout: column
 published: true
 statement: A love story from the redwoods to the sea, told in Polaroids.
-cover: img20230906_19272149.jpg
+cover: img20230906_18443518.jpg
 featured: []
 images:
 - img20230906_19272149.jpg
 - img20230906_18275700.jpg
 - img20230906_18310997.jpg
 - img20230906_18324641.jpg
-- img20230906_19051839.jpg
 - img20230906_19254509.jpg
 - img20230906_18430192.jpg
 - img20230906_19344051.jpg
@@ -32,3 +31,4 @@ images:
 - img20230906_19392187.jpg
 - img20230906_19432350.jpg
 captions: {}
+focal: {}

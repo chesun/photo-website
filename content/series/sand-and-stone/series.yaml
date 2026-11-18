@@ -14,7 +14,6 @@ featured:
 images:
 - 000038570010.jpg
 - 000038580006.jpg
-- 000038570008.jpg
 - 000038580014.jpg
 - 000038580005.jpg
 - 000038580003.jpg
@@ -24,8 +23,8 @@ images:
 captions:
   000038580006.jpg: Whitney Portal
   000038570010.jpg: Campground
-  000038570008.jpg: Manzanar
   000038580005.jpg: Mount Whitney
   000038580003.jpg: Death Valley
   000038580001.jpg: Life
-focal: {}
+focal:
+  000038570014.jpg: 50% 65%

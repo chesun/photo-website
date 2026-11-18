@@ -8,7 +8,7 @@ layout: column
 published: true
 statement: A romantic engagement session for my good friend Seojung and her fiancé Seokchan,
   during a weekend getaway at the Sonoma Coast.
-cover: seojung_seokchan_fave-29.jpg
+cover: seojung_seokchan_fave-36.jpg
 featured:
 - seojung_seokchan_fave-50.jpg
 images:
@@ -46,3 +46,5 @@ images:
 - seojung_seokchan_fave-52.jpg
 - seojung_seokchan_fave-55.jpg
 captions: {}
+focal:
+  seojung_seokchan_fave-50.jpg: 42% 41%

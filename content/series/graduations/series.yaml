@@ -35,3 +35,5 @@ images:
 - kairo_grad-374.jpg
 - rachel_k_grad-461.jpg
 captions: {}
+focal:
+  derek_k_grad-044.jpg: 43% 38%
