@@ -259,6 +259,9 @@ function bySlug(slug) { return state.series.find((s) => s.slug === slug); }
 function render() {
   const active = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.photo') : null;
   const refocus = active && active.dataset.file ? { slug: active.closest('.card').dataset.slug, file: active.dataset.file } : null;
+  // Emptying #main shortens the page for a moment, and the browser then
+  // clamps the scroll position to the top. Keep it where it was.
+  const scrollY = window.scrollY;
   const main = $('#main'); main.innerHTML = '';
   document.documentElement.style.setProperty('--top-h', $('.top').offsetHeight + 'px');
   main.appendChild(el('div', 'legend',
@@ -322,12 +325,13 @@ function render() {
   $('#status').textContent = dirty ? `${dirty} series with unsaved changes` : 'Everything saved';
   $('#status').className = 'status' + (dirty ? ' dirty' : '');
   $('#save-all').disabled = !dirty;
-  if (refocus) focusPhoto(refocus.slug, refocus.file);
+  window.scrollTo(0, scrollY);
+  if (refocus) focusPhoto(refocus.slug, refocus.file, { preventScroll: true });
 }
-function focusPhoto(slug, file) {
+function focusPhoto(slug, file, options) {
   const card = $(`.card[data-slug="${CSS.escape(slug)}"]`);
   const q = card && card.querySelector(`.photo[data-file="${CSS.escape(file)}"]`);
-  if (q) q.focus();
+  if (q) q.focus(options);
 }
 
 function renderSeries(s) {
