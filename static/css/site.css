@@ -294,42 +294,33 @@ h1, h2, h3 { font-weight: 300; margin: 0; }
 
 .page-landing .site-main { padding: 0; }
 .page-landing .site-footer { display: none; }
-/* The landing page is the visible screen and nothing more.
+/* The landing page is built as the old Squarespace cover page was, because
+   that page fills an iPhone's whole screen in Safari (iOS 26) and the earlier
+   layouts here did not.
 
-   On a phone, Safari (iOS 26) owns the strips behind the clock and behind
-   its floating toolbar. It paints a flat colour behind the clock while a
-   page is at its top, cuts position: fixed content off at both bars, and
-   draws page content behind the toolbar only when the page runs past the
-   screen, that is, when it scrolls. So a photograph cannot fill those strips
-   without the page scrolling, and a scrolling page always reaches an edge
-   where Safari's strip shows. Rather than fight that, the show fills the
-   small viewport exactly (toolbars shown, the part that is always visible)
-   and the page background is dark, which Safari uses for its strips: they
-   read as a frame. The page scrolls only if the words need more room than
-   the screen has, as on a phone turned sideways. */
-html:has(.page-landing), .page-landing {
-  background: var(--dark);
-  overscroll-behavior: none;
-}
+   The page itself has no height and never scrolls. The show is a box placed
+   on the viewport (position: absolute, not fixed: Safari cuts a fixed box off
+   at its clock and toolbar). Inside it are two layers of the same size: the
+   photographs behind, the words in front. The words layer scrolls by itself
+   when the words need more room than the screen has (a phone turned
+   sideways), so the photograph stays still behind them.
+
+   As on the Squarespace page, there is no page background, no theme colour,
+   no viewport-fit=cover and nothing pinned: it is not known which of these
+   Safari reacts to, so none is here. */
+html:has(.page-landing), .page-landing { background: none; }
 .page-landing { min-height: 0; }
 .hero {
-  position: relative;
-  min-height: 100vh; min-height: 100svh;
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  /* shows through for a moment while one photograph fades into the next */
   background: var(--dark);
-  overflow: hidden;
 }
-/* Invisible, but Safari still reads their colour for its strips (see
-   landing.html). Over 80% of the width and over 10px tall to qualify. */
-.edge {
-  position: fixed; left: 0; right: 0; z-index: 1;
-  height: 12px;
-  background-color: var(--dark);
-  visibility: hidden;
-  pointer-events: none;
+.hero-slides {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;      /* the slow zoom must not spill past the screen */
 }
-.edge-top { top: 0; }
-.edge-bottom { bottom: 0; }
-.hero-slides { position: absolute; inset: 0; }
 .hero-slide {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -350,12 +341,13 @@ html:has(.page-landing), .page-landing {
 /* the first slide: visible at once, at its starting scale until painted */
 .hero-slide.is-entering { transform: scale(1); transition: none; }
 
-/* The words fill the show and grow it if they need more room. The
-   wordmark-to-links group is centred in the space above the contact line,
-   which sits at the bottom. */
+/* The words layer: the same size as the show, scrolling inside itself if the
+   words need more room. The wordmark-to-links group is centred in the space
+   above the contact line, which sits at the bottom. */
 .hero-copy {
-  position: relative;
-  min-height: 100vh; min-height: 100svh;
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow-x: hidden; overflow-y: auto;
   padding-top: max(var(--s6), env(safe-area-inset-top));
   padding-bottom: max(var(--s6), env(safe-area-inset-bottom));
   padding-left: max(var(--gutter), env(safe-area-inset-left));

@@ -13,7 +13,7 @@
   <meta property="og:url" content="{{ site.base_url }}{{ url }}">
   {% if og_image %}<meta property="og:image" content="{{ site.base_url }}{{ og_image }}">{% endif %}
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="{% block theme_color %}#fbfbf9{% endblock %}">
+  {% block theme_color_tag %}<meta name="theme-color" content="{% block theme_color %}#fbfbf9{% endblock %}">{% endblock %}
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">

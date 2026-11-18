@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 {% set active_section = none %}
 {% block body_class %}page page-landing{% endblock %}
-{% block theme_color %}#0e0e0e{% endblock %}
-{# Lets the show fill the strips beside the camera on a phone turned sideways;
-   the hero pads its words clear of them. #}
-{% block viewport_extra %}, viewport-fit=cover{% endblock %}
+{# No theme colour and no viewport-fit=cover here: the page is built as the
+   old Squarespace cover page was (see the landing section of site.css). #}
+{% block theme_color_tag %}{% endblock %}
 {% block font_preloads %}<link rel="preload" href="/static/fonts/newsreader-italic-300.woff2" as="font" type="font/woff2" crossorigin>{% endblock %}
 {% block early_head %}
   {% if slides %}
@@ -29,13 +28,6 @@
    ships with a src: the script below shows the one chosen in the head, and
    site.js loads each next slide just before it is needed. Under
    prefers-reduced-motion the starting slide simply stays. #}
-{# Safari on iOS 26 colours the strip behind its clock from a full-width
-   pinned element at the top edge, and the strip behind its toolbar from one
-   at the bottom edge, even when they are invisible. These two carry the
-   colours of the current slide's top and bottom edges (computed at build
-   time), so the strips read as the photograph carried on. #}
-<div class="edge edge-top" aria-hidden="true"></div>
-<div class="edge edge-bottom" aria-hidden="true"></div>
 <section class="hero" data-hold="5000">
   <div class="hero-slides" aria-hidden="true">
     {% for s in slides %}
@@ -60,9 +52,6 @@
       // it has loaded and been painted; then the slow zoom runs as on every
       // later slide. Made active straight away it would start fully zoomed.
       img.classList.add("is-active", "is-entering");
-      document.querySelector(".edge-top").style.backgroundColor = img.dataset.edgeTop;
-      document.querySelector(".edge-bottom").style.backgroundColor = img.dataset.edgeBottom;
-      document.querySelector('meta[name="theme-color"]').content = img.dataset.edgeTop;
       function go() {
         requestAnimationFrame(function () {
           requestAnimationFrame(function () { img.classList.remove("is-entering"); });
